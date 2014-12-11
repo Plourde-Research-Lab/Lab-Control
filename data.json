@@ -1,0 +1,14 @@
+{
+	"data": [
+		{"timeStamp": "10234910", "baseTemp": "0.04"},
+		{"timeStamp": "10234909", "baseTemp": "0.034"},
+		{"timeStamp": "10234908", "baseTemp": "0.06"}
+	],
+	"control": {
+		"duringCooldown": "true",
+		"magup": "true",
+		"soak": "false",
+		"magdown": "false",
+		"maxVoltage": ".7"
+	}
+}

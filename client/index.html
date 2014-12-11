@@ -1,0 +1,44 @@
+<!doctype html>
+<html ng-app="labControlApp">
+<head>
+	<link rel="stylesheet" href="bower_components/foundation/css/foundation.css">
+	<link rel="stylesheet" type="text/css" href="bower_components/foundation/css/normalize.css">
+	
+	<link rel="stylesheet" type="text/css" href="bower_components/angular-native-picker/build/themes/default.css">
+	<link rel="stylesheet" type="text/css" href="bower_components/angular-native-picker/build/themes/default.date.css">
+	<link rel="stylesheet" type="text/css" href="bower_components/angular-native-picker/build/themes/default.time.css">
+
+
+	<script type="text/javascript" src="bower_components/foundation/js/vendor/jquery.js"></script>
+	<script src="bower_components/angular/angular.js"></script>
+	<script src="bower_components/angular-route/angular-route.js"></script>
+	<script src="bower_components/angular-native-picker/build/angular-datepicker.js"></script>
+	<script src="js/app.js"></script>	
+	<script src="js/controllers.js"></script>
+
+	<script type="text/javascript">
+		$('.timepicker').pickatime({
+		    editable: true
+		});
+		$('.datepicker').pickadate({
+			editable: true
+		});
+	</script>
+
+	<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
+	</script> 
+
+	<base href="/">
+</head>
+
+<body>
+	<div ng-view></div>
+
+	<script type="text/javascript" src="bower_components/foundation/js/foundation.js"></script>
+	<script type="text/javascript" src="bower_components/foundation/js/foundation/foundation.dropdown.js"></script>
+	<script type="text/javascript">
+	$(document).foundation();
+	</script>
+</body>
+
+</html>
