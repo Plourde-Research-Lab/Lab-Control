@@ -1,0 +1,58 @@
+<div class="container-fluid">
+    <tabset justified="true">
+    	<tab heading="Temperature">
+    		<nvd3 ng-repeat="data in tempData" options = "chartoptions" data="data" config="chartconfig"></nvd3>
+			<div class="row text-center">
+				<div class="col-lg-4 monitor">{{temp1 + " K"}}</div>
+				<div class="col-lg-4 monitor">{{temp2 + " K"}}</div>
+				<div class="col-lg-4 monitor">{{temp3 + " mK"}}</div>
+			</div>
+    	</tab>
+    	<tab heading="Magnet">
+    		<nvd3 ng-repeat="data in magnetData "options = "chartoptions" data="data" config="chartconfig"></nvd3>
+    		<div class="row text-center">
+	    		<div class="col-lg-6 monitor">{{v + " V"}}</div>
+	    		<div class="col-lg-6 monitor">{{i + " A"}}</div>
+    		</div>
+    	</tab>
+    	<tab heading="Control">
+	    	<div class="row text-center">
+	    		<h1>Magup</h1>
+		    	<div class="col-lg-offset-3 col-lg-6 well">
+		    		<div class="form-group">
+			    		<label class="text-center">Target Voltage</label>
+			    		<input type="text" ng-model="targetVoltage" placeholder="700 mV" class="form-control"></input>
+		    		</div>
+		    		<button type="button" class="btn btn-info" ng-click="magup();magupCollapse=false">Start Magup</button>
+					<div ng-init="magupCollapse=true" collapse="magupCollapse">
+						<progressbar class="progress-striped" value="magupPercentComplete"></progressbar>
+					</div>
+		    	</div>
+		    	
+		    </div>
+		    <div class="row text-center">
+		        <h1>Soak</h1>
+		        <div class="col-lg-offset-3 col-lg-6 well">
+		        	<div class="form-group">
+			        	<label class="text-center">Switch Status</label><p style="font-weight:bold;text-size:bold;">{{fridgeData.switchState}}</p>
+			        	<button class="btn btn-danger" ng-click="changeSwitch()">Open Switch</button>
+		        	</div>
+					<div ng-init="soakCollapse=true" collapse="soakCollapse">
+						<progressbar class="progress-striped" value="soakPercentComplete"></progressbar>
+					</div>
+		        </div>
+		    </div>
+		    <div class="row text-center">
+		        <h1>Magdown</h1>
+		        <div class="well col-lg-offset-3 col-lg-6">
+			        <div class="form-group">
+			        	<button class="btn" ng-click="magdown();magdownCollapse=false">Start Magdown</button>
+			        </div>
+					<div ng-init="magdownCollapse=true" collapse="magdownCollapse">
+						<progressbar class="progress-striped" value="magdownPercentComplete"></progressbar>
+					</div>
+		        </div>
+		    </div>
+    	</tab>
+    </tabset>
+</div>

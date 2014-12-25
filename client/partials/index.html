@@ -1,39 +1,10 @@
-<div>
-	<form>
-		<div class="row">
-			<p class="text-center large-4 columns">Job</p>
-			<input class="text-center large-4 columns" ng-model="newJob"></input>
-			<button class="submit text-center large-4 columns" ng-click="addJob()">Save Job</button>
+<div class="row text-center">
+	<h1>Plourde Research Group</h1>
+	<h2>Fridge Control</h2>
+	<div class="col-lg-offset-2 col-lg-8">
+		<div class="row" ng-repeat="fridge in model.fridges">
+			<div class="col-lg-6 text-right"><h3>{{fridge.name}}</h3></div>
+			<div class="col-lg-6 text-left"><h3>{{fridge.status}}</h3></div>
 		</div>
-		<div class="row">
-		{{newJob}}
-		</div>
-
-		<ul>
-			<li ng-repeat="j in jobs">{{j.name}}</li>
-		</ul>
-		<div class="row">
-			<h3 class="text-center">When would you like to be cold by?</h3>
-		</div>
-		<div class="row">
-			<div class="large-6 columns">
-				<input type="text" pick-a-date="date" placeholder="Select Date" /> {{ date }}
-			</div>
-			<div class="large-6 columns">
-				<input type="text" pick-a-time="time" placeholder="Select Time" /> {{ time }}
-			</div>
-		</div>
-		<div class="row">
-			<div class="small-6 large-centered columns"><h4 class="text-center">Soak Time</h4></div>
-		</div>
-		<div class="row">
-			<div class="small-6 large-centered columns"><input type="text" placeholder="20 (minutes)" ng-model="soakTime"/></div>
-		</div>
-
-		<div class="row">
-			<div class="small-6 large-centered columns text-center">
-				<button class="submit text-center">Submit Job</button>
-			</div>
-		</div>
-	</form>
+	</div>
 </div>

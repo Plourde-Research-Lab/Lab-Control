@@ -1,0 +1,45 @@
+body {
+	font-family: "Lato";
+	height: 100vh;
+	min-height: 100vh;
+	max-height: 100vh;
+}
+
+#jobContainer {
+	max-height: 40vh;
+	overflow-y: scroll;
+}
+
+.responsive {
+	text-align: center;
+}
+
+.container {
+	height: 100%;
+	max-height: 100%;
+	min-height: 100%;
+}
+
+svg {
+	height: 29vh;
+	min-height: 29vh;
+	max-height: 29vh;
+}
+
+.monitor {
+	font-size: xx-large;
+	height: 5vh;
+}
+
+.subheader {
+	font-weight: bold;
+}
+
+dl.tabs {
+    text-align: center;
+}
+
+dl.tabs dd {
+    float: none !important;
+    display: inline-block;
+}

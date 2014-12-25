@@ -1,0 +1,108 @@
+<div class="container-fluid">
+	<link rel="stylesheet" type="text/css" href="../css/styles.css">
+
+	<form style="">
+
+		<div class="row text-center"><h1>Schedule a Cycle</h1></div>
+
+		<!-- Choose Fridge -->
+		<div class="row">
+			<div class="col-lg-offset-5 col-lg-2 text-center">
+				<select class="form-control"ng-model="selectedADR" ng-options="adr.name for adr in adrs"></select>
+			</div>
+		</div>
+
+		<!-- Choose End Time -->
+		<div class="row text-center">
+			<h3>When would you like to be cold by?</h3>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-2 text-center" style="margin:0 auto;float: none;">
+				<div style="margin:0 auto; max-height=300px">
+			        <datepicker ng-model="date" min-date="today" show-weeks="true" class=""></datepicker>
+		    	</div>
+		    </div>
+		</div>
+		<div class="row">
+			<div class="col-lg-1 col-centered text-center">
+				<div style="float:none;margin: 0 auto">
+					<timepicker ng-model="time" minute-step="15" show-meridian="ismeridian"></timepicker>
+				</div>
+			</div>
+		</div>
+
+		<!-- Choose Soak Time -->
+		<div class="row">
+			<div class="col-lg-offset-3 col-lg-6"><h4 class="text-center">Soak Time</h4></div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-offset-5 col-lg-2 text-center">
+				<input class="form-control" type="text" placeholder="20 (minutes)" ng-model="soakTime"/>
+			</div>
+		</div>
+
+		</br>
+
+		<div class="row">
+			<div class="col-lg-offset-3 col-lg-6 text-center" style="display:inline-block;max-height=20vh">
+				<button class="btn btn-info" ng-click="calculateJobs();isCollapsed=false">Calculate Jobs</button>
+			</div>
+		</div>
+
+	</form>
+
+	<hr>
+	<!-- Preview Table of Calculated Jobs -->
+	<div ng-init="isCollapsed=true"collapse="isCollapsed">
+		<div class="row text-center">
+			<h3>Preview</h3>
+		</div>
+		<div class="row">
+			<div class="col-lg-offset-3 col-lg-6">
+				<table class="table table-striped" style="margins:auto">
+					<tr>
+						<th>Job</th>
+						<th>Date</th>
+						<th>Time</th>
+					</tr>
+					<tr ng-repeat="job in newJobs">
+						<td>{{job.type}}</td>
+						<td>{{job.dateString}}</td>
+						<td>{{job.timeString}}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-offset-3 col-lg-3 text-center"><button class="btn btn-danger" ng-click="removeNewJobs();isCollapsed=true">Cancel</button></div>
+			<div class="col-lg-3 text-center"><button class="btn btn-info" ng-click="saveJobs();isCollapsed=true">Submit Jobs</button></div>
+		</div>
+	</div>
+
+	<!-- Table of Scheduled Jobs -->
+	<div class="row text-center" ng-show="selectedADR.jobs.length>0" style="max-height:30vh;">
+		<h1>{{selectedADR.jobs.length}} Scheduled Jobs</h1>
+		<div class="col-lg-offset-2 col-lg-8" id="jobContainer">
+			<table class="table table-striped text-center">
+				<tr>
+					<th>Job</th>
+					<th>Date</th>
+					<th>Time</th>
+					<th>Completed</th>
+					<th>Scheduled On</th>
+					<th>Remove</th>
+				</tr>
+				<tr ng-repeat="job in selectedADR.jobs">
+					<td>{{job.type}}</td>
+					<td>{{job.dateString}}</td>
+					<td>{{job.timeString}}</td>
+					<td>{{job.completed}}</td>
+					<td>{{job.scheduledOn}}</td>
+					<td><button class="btn btn-danger" ng-click="removeJob(job)">X</button></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
