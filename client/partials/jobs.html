@@ -8,7 +8,7 @@
 		<!-- Choose Fridge -->
 		<div class="row">
 			<div class="col-lg-offset-5 col-lg-2 text-center">
-				<select class="form-control"ng-model="selectedADR" ng-options="adr.name for adr in adrs"></select>
+				<select class="form-control" ng-model="selectedADR" ng-options="adr.name for adr in adrs"></select>
 			</div>
 		</div>
 
@@ -19,13 +19,13 @@
 
 		<div class="row">
 			<div class="col-lg-2 text-center" style="margin:0 auto;float: none;">
-				<div style="margin:0 auto; max-height=300px">
-			        <datepicker ng-model="date" min-date="today" show-weeks="true" class=""></datepicker>
+				<div style="margin:0 auto; max-height=350px">
+			        <datepicker ng-model="date" min-date="today" show-weeks="false"></datepicker>
 		    	</div>
 		    </div>
 		</div>
 		<div class="row">
-			<div class="col-lg-1 col-centered text-center">
+			<div class="col-lg-1 col-centered text-center" style="margin:0 auto;float:none;">
 				<div style="float:none;margin: 0 auto">
 					<timepicker ng-model="time" minute-step="15" show-meridian="ismeridian"></timepicker>
 				</div>

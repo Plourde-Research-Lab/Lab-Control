@@ -9,7 +9,7 @@
 			</div>
     	</tab>
     	<tab heading="Magnet">
-    		<nvd3 ng-repeat="data in magnetData "options = "chartoptions" data="data" config="chartconfig"></nvd3>
+    		<nvd3 ng-repeat="data in magnetData "options = "chartoptions" data="data" config="chartconfig" class="magnet"></nvd3>
     		<div class="row text-center">
 	    		<div class="col-lg-6 monitor">{{v + " V"}}</div>
 	    		<div class="col-lg-6 monitor">{{i + " A"}}</div>
@@ -25,6 +25,7 @@
 		    		</div>
 		    		<button type="button" class="btn btn-info" ng-click="magup();magupCollapse=false">Start Magup</button>
 					<div ng-init="magupCollapse=true" collapse="magupCollapse">
+						<br>
 						<progressbar class="progress-striped" value="magupPercentComplete"></progressbar>
 					</div>
 		    	</div>

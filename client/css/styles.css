@@ -26,6 +26,12 @@ svg {
 	max-height: 29vh;
 }
 
+.magnet svg {
+	height: 40vh;
+	min-height: 40vh;
+	max-height: 40vh;
+}
+
 .monitor {
 	font-size: xx-large;
 	height: 5vh;
@@ -39,7 +45,7 @@ dl.tabs {
     text-align: center;
 }
 
-dl.tabs dd {
+dl.tabs dd  {
     float: none !important;
     display: inline-block;
 }

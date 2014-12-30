@@ -36,6 +36,8 @@ var ADR2DataDB = mongoose.createConnection('mongodb://localhost/adr2');
 var DR1DataDB = mongoose.createConnection('mongodb://localhost/dr1');
 var DR2DataDB = mongoose.createConnection('mongodb://localhost/dr2');
 
+var testDB = mongoose.createConnection('mongodb://localhost/test');
+
 // Schema Contructions 
 
 var jobSchema = {
@@ -58,7 +60,7 @@ var DRDataSchema = {
 	temp6: Number
 }
 var ADRDataSchema = {
-	timeStamp: Date,
+	timeStamp: Number,
 	baseTemp: Number,
 	threeKTemp: Number,
 	sixtyKTemp: Number,
@@ -66,9 +68,15 @@ var ADRDataSchema = {
 	psVoltage: Number,
 	psCurrent: Number,
 	currentJob: String,
-	percentComplete: String,
+	percentComplete: Number,
 	switchState: String
 }
+
+var testSchema = {
+	temp: Number
+}
+
+var testData = testDB.model('testData', testSchema);
 
 // Connect Schemas to Databases
 
@@ -184,12 +192,19 @@ app.post('/removeJob2', function (req, res) {
 // Data Monitors
 
 app.get('/getData', function (req, res) {
-	var x = {}
-	x.timeStamp = Date.now()
-	x.x1 = Math.random()*3
-	x.x2 = Math.random()*3
-	x.x3 = Math.random()/100
-	x.v = Math.random()
-	x.i = Math.random()
-	res.json(x);
+	ADR1Data.find().sort({timeStamp: -1}).limit(1).exec(function (err, data){
+		if (err || !data) console.log("No data found.")
+			else {
+				res.json(data);
+			}
+	});
+})
+
+app.get('/getTestData', function (req, res) {
+	ADR1Data.find().sort({timeStamp: -1}).limit(1).exec(function (err, data){
+		if (err || !data) console.log("No data found.")
+			else {
+				res.json(data);
+			}
+	});
 })
