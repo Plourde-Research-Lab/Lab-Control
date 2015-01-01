@@ -29,8 +29,8 @@ app.listen(app.get('port'), function() {
 
 // Database Connections
 
-var ADR1JobDB = mongoose.createConnection('mongodb://localhost/jobs1');
-var ADR1DataDB = mongoose.createConnection('mongodb://localhost/adr1');
+var ADR1JobDB = mongoose.createConnection('mongodb://128.230.72.201/jobs1');
+var ADR1DataDB = mongoose.createConnection('mongodb://128.230.72.201:27017/adr1');
 var ADR2JobDB = mongoose.createConnection('mongodb://localhost/jobs2');
 var ADR2DataDB = mongoose.createConnection('mongodb://localhost/adr2');
 var DR1DataDB = mongoose.createConnection('mongodb://localhost/dr1');
