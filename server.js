@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 var mongoose = require("mongoose");
 
 var app = express()
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 8080);
 var io = require('socket.io').listen(app.listen())
 
 io.on('connection', function (){
@@ -29,12 +29,19 @@ app.listen(app.get('port'), function() {
 
 // Database Connections
 
-var ADR1JobDB = mongoose.createConnection('mongodb://128.230.72.201/jobs1');
-var ADR1DataDB = mongoose.createConnection('mongodb://128.230.72.201:27017/adr1');
-var ADR2JobDB = mongoose.createConnection('mongodb://localhost/jobs2');
-var ADR2DataDB = mongoose.createConnection('mongodb://localhost/adr2');
-var DR1DataDB = mongoose.createConnection('mongodb://localhost/dr1');
-var DR2DataDB = mongoose.createConnection('mongodb://localhost/dr2');
+var ADR1ADDR = 'mongodb://128.230.72.201'
+var ADR2ADDR = 'mongodb://localhost'
+var DR1ADDR = 'mongodb://localhost'
+var DR2ADDR = 'mongodb://localhost'
+
+var ADR1JobDB = mongoose.createConnection(ADR1ADDR + '/jobs');
+var ADR1ControlDB = mongoose.createConnection(ADR1ADDR + '/control')
+var ADR1DataDB = mongoose.createConnection(ADR1ADDR + '/data');
+var ADR2JobDB = mongoose.createConnection(ADR2ADDR + '/jobs');
+var ADR2ControlDB = mongoose.createConnection(ADR2ADDR + '/control')
+var ADR2DataDB = mongoose.createConnection(ADR2ADDR + '/data');
+var DR1DataDB = mongoose.createConnection(DR1ADDR + '/dr1');
+var DR2DataDB = mongoose.createConnection(DR2ADDR + '/dr2');
 
 var testDB = mongoose.createConnection('mongodb://localhost/test');
 
@@ -52,6 +59,7 @@ var jobSchema = {
 }
 var DRDataSchema = {
 	timeStamp: Date,
+	state: String,
 	temp1: Number,
 	temp2: Number,
 	temp3: Number,
@@ -71,19 +79,24 @@ var ADRDataSchema = {
 	percentComplete: Number,
 	switchState: String
 }
-
-var testSchema = {
-	temp: Number
+var controlSchema = {
+	controlState: String, //State we want the ADR to be in 
+	controlStateValue: String, //target voltage for magup, soak time for soak, target temp for magdown
+	prevControlState: String, //State the ADR was in previously
+	maxCurrent: Number,
+	maxVoltage: Number,
+	minutesToMagup: Number,
+	minutesToMagdown: Number
 }
-
-var testData = testDB.model('testData', testSchema);
 
 // Connect Schemas to Databases
 
 var ADR1Job = ADR1JobDB.model('ADR1Job', jobSchema);
+var ADR1Control = ADR1ControlDB.model('ADR1Control', controlSchema)
 var ADR1Data = ADR1DataDB.model('ADR1Data', ADRDataSchema);
 
 var ADR2Job = ADR2JobDB.model('ADR2Job', jobSchema);
+var ADR2Control = ADR2ControlDB.model('ADR1Control', controlSchema)
 var ADR2Data = ADR2DataDB.model('ADR2Data', ADRDataSchema);
 
 var DR1Data = DR1DataDB.model('DR1Data', DRDataSchema);
@@ -190,17 +203,7 @@ app.post('/removeJob2', function (req, res) {
 
 
 // Data Monitors
-
 app.get('/getData', function (req, res) {
-	ADR1Data.find().sort({timeStamp: -1}).limit(1).exec(function (err, data){
-		if (err || !data) console.log("No data found.")
-			else {
-				res.json(data);
-			}
-	});
-})
-
-app.get('/getTestData', function (req, res) {
 	ADR1Data.find().sort({timeStamp: -1}).limit(1).exec(function (err, data){
 		if (err || !data) console.log("No data found.")
 			else {
