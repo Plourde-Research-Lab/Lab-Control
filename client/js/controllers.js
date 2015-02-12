@@ -47,7 +47,7 @@ angular.module('labControlApp').controller('ADR1Ctrl', ['$scope', '$http', funct
                 top: 10,
                 right: 20,
                 bottom: 10,
-                left: 20
+                left: 30
             },
             x: function(d){ return d.x; },
             y: function(d){ return d.y; },
@@ -56,7 +56,7 @@ angular.module('labControlApp').controller('ADR1Ctrl', ['$scope', '$http', funct
             transitionDuration: 0,    
             yAxis: {
                 tickFormat: function(d){
-                   return d3.format('.01f')(d);
+                   return d3.format('.3n')(d);
                 }
             },
             showXAxis: false
@@ -151,7 +151,7 @@ angular.module('labControlApp').controller('ADR1Ctrl', ['$scope', '$http', funct
 
 }]);
 
-angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', function ($scope, $http) {
+angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
 	$scope.model = {
 		message: "This is the controller for dealing with ADR2."
 	};
@@ -169,7 +169,7 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', funct
                 top: 10,
                 right: 20,
                 bottom: 10,
-                left: 20
+                left: 40
             },
             x: function(d){ return d.x; },
             y: function(d){ return d.y; },
@@ -178,12 +178,55 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', funct
             transitionDuration: 0,    
             yAxis: {
                 tickFormat: function(d){
-                   return d3.format('.01f')(d);
+                   return d3.format('.4n')(d);
                 }
             },
             showXAxis: false
         }
 	};
+    $scope.logChartOptions = {
+
+	    chart: {
+	        type: 'lineWithFocusChart',
+	        margin : {
+	            top: 10,
+	            right: 20,
+	            bottom: 10,
+	            left: 40
+	        },
+	        x: function(d){ return d.x; },
+	        y: function(d){ return d.y; },
+	        useInteractiveGuideline: false,
+	        showLegend: true,
+	        transitionDuration: 0,    
+	        yAxis: {
+	            tickFormat: function(d){
+	               return d3.format('.4n')(d);
+	            }
+	        },
+	        y2Axis: {
+	        	tickFormat: function(d){
+	        		return d3.format('.4n')(d);
+	        	}
+	        },
+	        y3Axis: {
+	        	axisLabel: 'y3 axis'
+	        },
+	        xAxis: {
+	        	axisLabel: "Time",
+	        	tickFormat: function  (d) {
+	        		return d3.time.format.utc('%X')(new Date(d*1000));
+	        	}
+	        },
+	        x2Axis: {
+	        	tickFormat: function(d){
+	        		return d3.time.format.utc('%a,%-I%p')(new Date(d*1000));
+	        	}
+	        }
+	 
+	    }
+	};
+
 
 	$scope.tempData = [
 		[{
@@ -192,6 +235,10 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', funct
 		}],
 		[{
 			key: "3K Temp",
+			values: []
+		}],
+		[{
+			key: "1K Temp",
 			values: []
 		}],
 		[{
@@ -211,34 +258,70 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', funct
 		}]
 	]
 
+	$scope.logData = [
+		{
+			key: "60K Temperature",
+			values: []
+		},
+		{
+			key: "3K Temperature",
+			values: []
+		}
+	]
 	$scope.fridgeData = {
 		currentState: "Magup",
 		switchState: "Closed",
-		magupPercentage: "60"
+		magupPercentage: "60",
+		percentComplete: "0"
+	}
+
+	$scope.getLogData = function (numPoints) {
+		console.log($scope.logData)
+		$http.get('/getData',{
+			params: {num: numPoints}
+		})
+			.success(function (data,status,headers,config) {
+				// Fix this
+				$scope.logData[0].values = [];
+				$scope.logData[1].values = [];
+				data.forEach(function (datapoint,index) {
+					$scope.logData[0].values.push({x: datapoint.timeStamp, y: datapoint.sixtyKTemp});
+					$scope.logData[1].values.push({x: datapoint.timeStamp, y: datapoint.threeKTemp});
+				});
+			});
 	}
 
 	$scope.getChartData = function () {
-		$http.get('/getData').
-			success(function (data, status, headers, config) {
-				var data = data[0]
-				// console.log(data.timeStamp)
-				$scope.temp1 = data.sixtyKTemp.toFixed(4);
-				$scope.temp2 = data.threeKTemp.toFixed(3);
-				$scope.temp3 = (data.baseTemp*1000).toFixed(4);
-				$scope.v = data.magnetVoltage.toFixed(4);
-				$scope.i = data.psCurrent.toFixed(4);
-				$scope.tempData[0][0].values.push({x: data.timeStamp, y: $scope.temp1});
-				$scope.tempData[1][0].values.push({x: data.timeStamp, y: $scope.temp2});
-				$scope.tempData[2][0].values.push({x: data.timeStamp, y: $scope.temp3});
-				$scope.magnetData[0][0].values.push({x: data.timeStamp, y: $scope.v});
-				$scope.magnetData[1][0].values.push({x: data.timeStamp, y: $scope.i});
-				// $scope.$apply();
-				if ($scope.tempData[0][0].values.length > 60) {
-					$scope.tempData[0][0].values.shift();
-					$scope.tempData[1][0].values.shift();
-					$scope.tempData[2][0].values.shift();
-					$scope.magnetData[0][0].values.shift();
-					$scope.magnetData[1][0].values.shift();
+		$http.get('/getData',{
+			params: {num: 1}
+		})
+			.success(function (data, status, headers, config) {
+				if (status != 304) {
+					$scope.timeStamp = data[0].timeStamp;
+					$scope.temp1 = data[0].sixtyKTemp.toFixed(4);
+					$scope.temp2 = data[0].threeKTemp.toFixed(3);
+					$scope.temp3 = data[0].oneKTemp.toFixed(3);
+					$scope.temp4 = (data[0].baseTemp*1000).toFixed(4);
+					$scope.v = data[0].magnetVoltage.toFixed(4);
+					$scope.i = data[0].psCurrent.toFixed(4);
+					$scope.fridgeData.currentState = data[0].currentJob;
+					$scope.fridgeData.switchState = data[0].switchState;
+					$scope.percentComplete = data[0].percentComplete;
+					$scope.tempData[0][0].values.push({x: $scope.timeStamp, y: $scope.temp1});
+					$scope.tempData[1][0].values.push({x: $scope.timeStamp, y: $scope.temp2});
+					$scope.tempData[2][0].values.push({x: $scope.timeStamp, y: $scope.temp3});
+					$scope.tempData[3][0].values.push({x: $scope.timeStamp, y: $scope.temp4});
+					$scope.magnetData[0][0].values.push({x: $scope.timeStamp, y: $scope.v});
+					$scope.magnetData[1][0].values.push({x: $scope.timeStamp, y: $scope.i});
+					// $scope.$apply();
+					// if ($scope.tempData[0][0].values.length > 60) {
+					// 	$scope.tempData[0][0].values.shift();
+					// 	$scope.tempData[1][0].values.shift();
+					// 	$scope.tempData[2][0].values.shift();
+					// 	$scope.tempData[3][0].values.shift();
+					// 	$scope.magnetData[0][0].values.shift();
+					// 	$scope.magnetData[1][0].values.shift();
+					// }
 				}
 			});
 		setTimeout($scope.getChartData, 1000);	
@@ -247,7 +330,7 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', funct
 	$scope.magup = function () {
 
 		var magupJob = new function() {
-			this.type = "Magup",
+			this.jobType = "Magup",
 			this.finishTime = soakJob.startTime;
 			this.startTime = new Date(this.finishTime - 60*60000); //Subtract magup time
 			this.completed = false;
@@ -268,7 +351,6 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', funct
 			$scope.getChartData()
 		}, 200);	
 	}
-
 	$scope.init()
 
 }]);

@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 var mongoose = require("mongoose");
 
 var app = express()
-app.set('port', process.env.PORT || 8080);
+app.set('port', process.env.PORT || 9999);
 var io = require('socket.io').listen(app.listen())
 
 io.on('connection', function (){
@@ -18,7 +18,7 @@ io.on('connection', function (){
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/client')));
 app.use('/bower_components',  express.static(__dirname + '/bower_components'));
@@ -29,8 +29,8 @@ app.listen(app.get('port'), function() {
 
 // Database Connections
 
-var ADR1ADDR = 'mongodb://128.230.72.201'
-var ADR2ADDR = 'mongodb://localhost'
+var ADR1ADDR = 'mongodb://localhost'
+var ADR2ADDR = 'mongodb://128.230.72.201'
 var DR1ADDR = 'mongodb://localhost'
 var DR2ADDR = 'mongodb://localhost'
 
@@ -43,7 +43,6 @@ var ADR2DataDB = mongoose.createConnection(ADR2ADDR + '/data');
 var DR1DataDB = mongoose.createConnection(DR1ADDR + '/dr1');
 var DR2DataDB = mongoose.createConnection(DR2ADDR + '/dr2');
 
-var testDB = mongoose.createConnection('mongodb://localhost/test');
 
 // Schema Contructions 
 
@@ -70,6 +69,7 @@ var DRDataSchema = {
 var ADRDataSchema = {
 	timeStamp: Number,
 	baseTemp: Number,
+	oneKTemp: Number,
 	threeKTemp: Number,
 	sixtyKTemp: Number,
 	magnetVoltage: Number,
@@ -204,7 +204,7 @@ app.post('/removeJob2', function (req, res) {
 
 // Data Monitors
 app.get('/getData', function (req, res) {
-	ADR1Data.find().sort({timeStamp: -1}).limit(1).exec(function (err, data){
+	ADR1Data.find().sort({timeStamp: -1}).limit(req.param('num')).exec(function (err, data){
 		if (err || !data) console.log("No data found.")
 			else {
 				res.json(data);
