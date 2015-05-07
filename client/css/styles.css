@@ -21,9 +21,9 @@ body {
 }
 
 svg {
-	height: 40vh;
-	min-height: 40vh;
-	max-height: 40vh;
+	height: 36vh;
+	min-height: 36vh;
+	max-height: 36vh;
 }
 
 .magnet svg {
@@ -36,6 +36,7 @@ svg {
 	height: 80vh;
 	min-height: 80vh;
 	max-height: 80vh;
+	margin-bottom: 60;
 }
 
 .monitor {

@@ -1,4 +1,5 @@
 var express = require("express");
+var compress = require("compression");
 var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -6,16 +7,10 @@ var bodyParser = require('body-parser');
 var mongoose = require("mongoose");
 
 var app = express()
-app.set('port', process.env.PORT || 9999);
-var io = require('socket.io').listen(app.listen())
+app.set('port', process.env.PORT || 80);
 
-io.on('connection', function (){
-	console.log('connected');
-})
 
-// require('./config').(app, io);
-// require('./routes').(app, io);
-
+app.use(compress())
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -204,10 +199,11 @@ app.post('/removeJob2', function (req, res) {
 
 // Data Monitors
 app.get('/getData', function (req, res) {
-	ADR1Data.find().sort({timeStamp: -1}).limit(req.param('num')).exec(function (err, data){
+	ADR1Data.find().limit(req.param('num')).sort({timeStamp: -1}).exec(function (err, data){
 		if (err || !data) console.log("No data found.")
 			else {
 				res.json(data);
+				res.flush()
 			}
 	});
 })

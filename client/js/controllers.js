@@ -119,7 +119,7 @@ angular.module('labControlApp').controller('ADR1Ctrl', ['$scope', '$http', funct
 					$scope.magnetData[1][0].values.shift();
 				}
 			});
-		setTimeout($scope.getChartData, 1000);	
+		setTimeout($scope.getChartData, 5000);	
 	}
 
 	$scope.magup = function () {
@@ -191,7 +191,7 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', '$tim
 	        margin : {
 	            top: 10,
 	            right: 20,
-	            bottom: 10,
+	            bottom: 60,
 	            left: 40
 	        },
 	        x: function(d){ return d.x; },
@@ -213,7 +213,6 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', '$tim
 	        	axisLabel: 'y3 axis'
 	        },
 	        xAxis: {
-	        	axisLabel: "Time",
 	        	tickFormat: function  (d) {
 	        		return d3.time.format.utc('%X')(new Date(d*1000));
 	        	}
@@ -231,19 +230,27 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', '$tim
 	$scope.tempData = [
 		[{
 			key: "60K Temp",
-			values: []
+			values: [],
+			temp: null,
+			delta: null
 		}],
 		[{
 			key: "3K Temp",
-			values: []
+			values: [],
+			temp: null,
+			delta: null
 		}],
 		[{
 			key: "1K Temp",
-			values: []
+			values: [],
+			temp: null,
+			delta: null
 		}],
 		[{
 			key: "Base Temp",
-			values: []
+			values: [],
+			temp: null,
+			delta: null
 		}]
 	]
 
@@ -266,6 +273,14 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', '$tim
 		{
 			key: "3K Temperature",
 			values: []
+		},
+		{
+			key: "1K Temperature",
+			values: []
+		},
+		{
+			key: "Base Temperature",
+			values: []
 		}
 	]
 	$scope.fridgeData = {
@@ -275,20 +290,30 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', '$tim
 		percentComplete: "0"
 	}
 
-	$scope.getLogData = function (numPoints) {
-		console.log($scope.logData)
+	$scope.getLogData = function (variable) {
+		var timeStep = 5 //Number of seconds between data collection
+
 		$http.get('/getData',{
-			params: {num: numPoints}
+			params: {num: variable/timeStep}
 		})
 			.success(function (data,status,headers,config) {
 				// Fix this
 				$scope.logData[0].values = [];
 				$scope.logData[1].values = [];
+				$scope.logData[2].values = [];
+				$scope.logData[3].values = [];
 				data.forEach(function (datapoint,index) {
 					$scope.logData[0].values.push({x: datapoint.timeStamp, y: datapoint.sixtyKTemp});
 					$scope.logData[1].values.push({x: datapoint.timeStamp, y: datapoint.threeKTemp});
+					$scope.logData[2].values.push({x: datapoint.timeStamp, y: datapoint.oneKTemp});
+					$scope.logData[3].values.push({x: datapoint.timeStamp, y: datapoint.baseTemp});
 				});
 			});
+	}
+
+	$scope.calculateTempDelta = function(array) {
+		//Return mK / second
+		return ((array[array.length-1]['y'] - array[0]['y'])/(array[array.length-1]['x'] - array[0]['x'])*1000).toFixed(3)
 	}
 
 	$scope.getChartData = function () {
@@ -297,35 +322,44 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', '$tim
 		})
 			.success(function (data, status, headers, config) {
 				if (status != 304) {
-					$scope.timeStamp = data[0].timeStamp;
-					$scope.temp1 = data[0].sixtyKTemp.toFixed(4);
-					$scope.temp2 = data[0].threeKTemp.toFixed(3);
-					$scope.temp3 = data[0].oneKTemp.toFixed(3);
-					$scope.temp4 = (data[0].baseTemp*1000).toFixed(4);
-					$scope.v = data[0].magnetVoltage.toFixed(4);
-					$scope.i = data[0].psCurrent.toFixed(4);
-					$scope.fridgeData.currentState = data[0].currentJob;
-					$scope.fridgeData.switchState = data[0].switchState;
-					$scope.percentComplete = data[0].percentComplete;
-					$scope.tempData[0][0].values.push({x: $scope.timeStamp, y: $scope.temp1});
-					$scope.tempData[1][0].values.push({x: $scope.timeStamp, y: $scope.temp2});
-					$scope.tempData[2][0].values.push({x: $scope.timeStamp, y: $scope.temp3});
-					$scope.tempData[3][0].values.push({x: $scope.timeStamp, y: $scope.temp4});
-					$scope.magnetData[0][0].values.push({x: $scope.timeStamp, y: $scope.v});
-					$scope.magnetData[1][0].values.push({x: $scope.timeStamp, y: $scope.i});
-					// $scope.$apply();
-					// if ($scope.tempData[0][0].values.length > 60) {
-					// 	$scope.tempData[0][0].values.shift();
-					// 	$scope.tempData[1][0].values.shift();
-					// 	$scope.tempData[2][0].values.shift();
-					// 	$scope.tempData[3][0].values.shift();
-					// 	$scope.magnetData[0][0].values.shift();
-					// 	$scope.magnetData[1][0].values.shift();
-					// }
+					$scope.updateChartData(data[0])
 				}
 			});
-		setTimeout($scope.getChartData, 1000);	
+		setTimeout($scope.getChartData, 5050);	
 	}
+
+	$scope.updateChartData = function (data) {
+		$scope.timeStamp = data.timeStamp;
+		$scope.tempData[0][0].temp = data.sixtyKTemp.toFixed(4);
+		// $scope.temp[0].temp = data.sixtyKTemp.toFixed(4);
+		$scope.tempData[1][0].temp = data.threeKTemp.toFixed(3);
+		$scope.tempData[2][0].temp = data.oneKTemp.toFixed(3);
+		$scope.tempData[3][0].temp = (data.baseTemp*1000).toFixed(4);
+		$scope.v = data.magnetVoltage.toFixed(4);
+		$scope.i = data.psCurrent.toFixed(4);
+		$scope.fridgeData.currentState = data.currentJob;
+		$scope.fridgeData.switchState = data.switchState;
+		$scope.percentComplete = data.percentComplete;
+
+		$scope.tempData.forEach(function(element, index) {
+			element[0].values.push({x: $scope.timeStamp, y: element[0].temp});
+			element[0].delta = $scope.calculateTempDelta(element[0].values)
+		});
+
+		$scope.magnetData[0][0].values.push({x: $scope.timeStamp, y: $scope.v});
+		$scope.magnetData[1][0].values.push({x: $scope.timeStamp, y: $scope.i});
+		$scope.$apply();
+		if ($scope.tempData[0][0].values.length > 60) {
+			$scope.tempData[0][0].values.shift();
+			$scope.tempData[1][0].values.shift();
+			$scope.tempData[2][0].values.shift();
+			$scope.tempData[3][0].values.shift();
+			$scope.magnetData[0][0].values.shift();
+			$scope.magnetData[1][0].values.shift();
+		}
+
+	}
+
 
 	$scope.magup = function () {
 
@@ -350,6 +384,8 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', '$tim
 		setTimeout(function() {
 			$scope.getChartData()
 		}, 200);	
+
+		$scope.temp = [{},{},{},{}];
 	}
 	$scope.init()
 
