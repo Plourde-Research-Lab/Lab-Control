@@ -7,10 +7,9 @@ mongod --dbpath C:\MongoDB\data
 
 **Start Python Data Scraper**
 
-python datascraper.py
-
+For now, execute from the DataScraper.ipynb notebook.
 **Load App**
 
 Navigate to 
-    LAB.IP:9999
+    LAB.IP
     
