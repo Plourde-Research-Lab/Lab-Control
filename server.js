@@ -25,7 +25,7 @@ app.listen(app.get('port'), function() {
 // Database Connections
 
 var ADR1ADDR = 'mongodb://localhost'
-var ADR2ADDR = 'mongodb://128.230.72.201'
+var ADR2ADDR = 'mongodb://localhost'
 var DR1ADDR = 'mongodb://localhost'
 var DR2ADDR = 'mongodb://localhost'
 

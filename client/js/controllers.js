@@ -174,7 +174,7 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', '$tim
             x: function(d){ return d.x; },
             y: function(d){ return d.y; },
             useInteractiveGuideline: false,
-            showLegend: false,
+            showLegend: true,
             transitionDuration: 0,    
             yAxis: {
                 tickFormat: function(d){
@@ -325,6 +325,7 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', '$tim
 					$scope.updateChartData(data[0])
 				}
 			});
+
 		setTimeout($scope.getChartData, 5050);	
 	}
 
@@ -341,23 +342,28 @@ angular.module('labControlApp').controller('ADR2Ctrl', ['$scope', '$http', '$tim
 		$scope.fridgeData.switchState = data.switchState;
 		$scope.percentComplete = data.percentComplete;
 
-		$scope.tempData.forEach(function(element, index) {
-			element[0].values.push({x: $scope.timeStamp, y: element[0].temp});
-			element[0].delta = $scope.calculateTempDelta(element[0].values)
-		});
+		console.log($scope.tempData[0][0].temp)
+		if ($scope.tempData[0][0].temp < 289.9) {
+			$scope.tempData.forEach(function(element, index) {
+				element[0].values.push({x: $scope.timeStamp, y: element[0].temp});
+				element[0].delta = $scope.calculateTempDelta(element[0].values)
+			});
 
-		$scope.magnetData[0][0].values.push({x: $scope.timeStamp, y: $scope.v});
-		$scope.magnetData[1][0].values.push({x: $scope.timeStamp, y: $scope.i});
-		$scope.$apply();
-		if ($scope.tempData[0][0].values.length > 60) {
-			$scope.tempData[0][0].values.shift();
-			$scope.tempData[1][0].values.shift();
-			$scope.tempData[2][0].values.shift();
-			$scope.tempData[3][0].values.shift();
-			$scope.magnetData[0][0].values.shift();
-			$scope.magnetData[1][0].values.shift();
+			$scope.magnetData[0][0].values.push({x: $scope.timeStamp, y: $scope.v});
+			$scope.magnetData[1][0].values.push({x: $scope.timeStamp, y: $scope.i});
+			$scope.$apply();
+			if ($scope.tempData[0][0].values.length > 60) {
+				$scope.tempData[0][0].values.shift();
+				$scope.tempData[1][0].values.shift();
+				$scope.tempData[2][0].values.shift();
+				$scope.tempData[3][0].values.shift();
+				$scope.magnetData[0][0].values.shift();
+				$scope.magnetData[1][0].values.shift();
+			}
+		} else {
+			$scope.fridgeData.currentState = "Warm"
+			console.log($scope.fridgeData.currentState)
 		}
-
 	}
 
 

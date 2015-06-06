@@ -8,6 +8,8 @@ body {
 #jobContainer {
 	max-height: 40vh;
 	overflow-y: scroll;
+	box-shadow: 5px 5px 5px gray;
+	border: 1px solid gray;
 }
 
 .responsive {
@@ -24,6 +26,8 @@ svg {
 	height: 36vh;
 	min-height: 36vh;
 	max-height: 36vh;
+	box-shadow: 5px 5px 5px gray;
+	border: 1px solid gray;
 }
 
 .magnet svg {
