@@ -60,3 +60,8 @@ dl.tabs dd  {
     float: none !important;
     display: inline-block;
 }
+
+iframe {
+	min-height: 50vh;
+	width: 100vh;
+}
