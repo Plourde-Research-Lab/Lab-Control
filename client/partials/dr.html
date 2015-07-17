@@ -1,3 +1,31 @@
 <div class="container-fluid">
-  <p>{{model.message}}</p>
+  	<tabset justified="true">
+    	<tab heading="Temperature">
+    		<div class="col-lg-6 text-center panel" ng-repeat="data in tempData" >
+    			<div class="monitor">{{data[0].temp + "K : " + data[0].delta + "mK/s"}}</div>
+    			<nvd3 class = "DR" options = "chartoptions" data="data" config="chartconfig"></nvd3>
+    		</div>
+    	</tab>
+    	
+    	<tab heading="Log">
+    		<div class="row text-center">
+    			<form class="form-inline">
+	    			<div class="form-group">
+	    				<label class="control-label">Load Data</label>
+	    				<input class="form-control" ng-model="numLogPoints" placeholder="Number"></input>
+	    				<select class="form-control" ng-model="logUnits">
+	    					<option value="60">Minutes</option>
+	    					<option value="3600">Hours</option>
+	    					<option value="86400">Days</option>
+	    				</select>
+	    				<button type="button" class="btn btn-info" ng-click="getLogData(logUnits*numLogPoints);logCollapse=false">Get Data</button>
+	    			</div>
+	    		</form>
+    		</div>
+    		<div class="row" ng-init="logCollapse=true" collapse="logCollapse">
+	    		<nvd3 options = "logChartOptions" data="logData" config="chartconfig" class="log"></nvd3>
+	    	</div>
+    	</tab>
+    	
+    </tabset>
 </div>

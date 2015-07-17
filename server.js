@@ -26,7 +26,7 @@ app.listen(app.get('port'), function() {
 
 var ADR1ADDR = 'mongodb://localhost'
 var ADR2ADDR = 'mongodb://localhost'
-var DR1ADDR = 'mongodb://localhost'
+var DR1ADDR = 'mongodb://128.230.72.235'
 var DR2ADDR = 'mongodb://localhost'
 
 var ADR1JobDB = mongoose.createConnection(ADR1ADDR + '/jobs');
@@ -35,7 +35,7 @@ var ADR1DataDB = mongoose.createConnection(ADR1ADDR + '/data');
 var ADR2JobDB = mongoose.createConnection(ADR2ADDR + '/jobs');
 var ADR2ControlDB = mongoose.createConnection(ADR2ADDR + '/control')
 var ADR2DataDB = mongoose.createConnection(ADR2ADDR + '/data');
-var DR1DataDB = mongoose.createConnection(DR1ADDR + '/dr1');
+var DR1DataDB = mongoose.createConnection(DR1ADDR + '/data');
 var DR2DataDB = mongoose.createConnection(DR2ADDR + '/dr2');
 
 
@@ -52,14 +52,14 @@ var jobSchema = {
 	scheduledOn: Date
 }
 var DRDataSchema = {
-	timeStamp: Date,
-	state: String,
-	temp1: Number,
-	temp2: Number,
-	temp3: Number,
-	temp4: Number,
-	temp5: Number,
-	temp6: Number
+	timeStamp: Number,
+	t1: Number,
+	t3: Number,
+	t4: Number,
+	t5: Number,
+	t6: Number,
+	t7: Number,
+	t8: Number
 }
 var ADRDataSchema = {
 	timeStamp: Number,
@@ -84,6 +84,13 @@ var controlSchema = {
 	minutesToMagdown: Number
 }
 
+var statusSchema = {
+	fridgeStatus: String, //Cold or Warm
+	magnetStatus: String,
+	magnetGoal: String,
+	switchState: String
+}
+
 // Connect Schemas to Databases
 
 var ADR1Job = ADR1JobDB.model('ADR1Job', jobSchema);
@@ -91,7 +98,7 @@ var ADR1Control = ADR1ControlDB.model('ADR1Control', controlSchema)
 var ADR1Data = ADR1DataDB.model('ADR1Data', ADRDataSchema);
 
 var ADR2Job = ADR2JobDB.model('ADR2Job', jobSchema);
-var ADR2Control = ADR2ControlDB.model('ADR1Control', controlSchema)
+var ADR2Control = ADR2ControlDB.model('ADR2Control', controlSchema)
 var ADR2Data = ADR2DataDB.model('ADR2Data', ADRDataSchema);
 
 var DR1Data = DR1DataDB.model('DR1Data', DRDataSchema);
@@ -198,12 +205,41 @@ app.post('/removeJob2', function (req, res) {
 
 
 // Data Monitors
+// app.get('/getData', function (req, res) {
+// 	ADR2Data.find().limit(req.param('num')).sort({timeStamp: -1}).exec(function (err, data){
+// 		if (err || !data) console.log("No data found.")
+// 			else {
+// 				res.json(data);
+// 				res.flush()
+// 			}
+// 	});
+// })
+
 app.get('/getData', function (req, res) {
-	ADR1Data.find().limit(req.param('num')).sort({timeStamp: -1}).exec(function (err, data){
-		if (err || !data) console.log("No data found.")
-			else {
-				res.json(data);
-				res.flush()
-			}
-	});
+	switch(req.param('fridge')) {
+		case 'DR1':
+			DR1Data.find().limit(req.param('num')).sort({timeStamp: -1}).exec(function (err, data){
+				if (err || !data) console.log("No data found.")
+					else {
+						res.json(data);
+						res.flush()
+					}
+			});
+			break;
+
+		case 'ADR2':
+			ADR2Data.find().limit(req.param('num')).sort({timeStamp: -1}).exec(function (err, data){
+			if (err || !data) console.log("No data found.")
+				else {
+					res.json(data);
+					res.flush()
+				}
+			});
+			break;
+
+	}
+	
 })
+
+
+

@@ -26,7 +26,7 @@ svg {
 	height: 36vh;
 	min-height: 36vh;
 	max-height: 36vh;
-	box-shadow: 5px 5px 5px gray;
+	box-shadow: 2px 2px 2px gray;
 	border: 1px solid gray;
 }
 
@@ -41,6 +41,12 @@ svg {
 	min-height: 80vh;
 	max-height: 80vh;
 	margin-bottom: 60;
+}
+
+.DR svg {
+	height: 15vh;
+	min-height: 15vh;
+	max-height: 15vh;
 }
 
 .monitor {
