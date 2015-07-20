@@ -1,9 +1,9 @@
 <div class="container-fluid">
     <tabset justified="true">
     	<tab heading="Temperature">
-    		<div class="col-lg-6 text-center panel" ng-repeat="data in tempData" >
-    			<div class="monitor">{{data[0].temp + "K : " + data[0].delta + "mK/s"}}</div>
-    			<nvd3 options = "chartoptions" data="data" config="chartconfig"></nvd3>
+    		<div class="col-lg-6 text-center panel" ng-repeat="data in tempData" style="margin: 0px;">
+    			<p class="ADRmonitor">{{data[0].temp + "K : " + data[0].delta + "mK/s"}}</p>
+    			<nvd3 class = "ADR" options = "chartoptions" data="data" config="chartconfig"></nvd3>
     		</div>
     		
 <!-- 			<div class="row text-center">

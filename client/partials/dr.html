@@ -2,8 +2,15 @@
   	<tabset justified="true">
     	<tab heading="Temperature">
     		<div class="col-lg-6 text-center panel" ng-repeat="data in tempData" >
-    			<div class="monitor">{{data[0].temp + "K : " + data[0].delta + "mK/s"}}</div>
-    			<nvd3 class = "DR" options = "chartoptions" data="data" config="chartconfig"></nvd3>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <p class="DRMonitor">{{data[0].temp}}<span class="units" style="font-size: medium;">K</span></p>
+                        <p class="DRMonitor">{{data[0].delta}}<span class="units" style="font-size: medium;">mK/s</span></p>
+                    </div>
+                    <div class="col-lg-8">
+                        <nvd3 class = "DR" options = "chartoptions" data="data" config="chartconfig"></nvd3>
+                    </div>
+                </div>
     		</div>
     	</tab>
     	

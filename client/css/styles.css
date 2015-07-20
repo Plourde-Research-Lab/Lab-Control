@@ -1,8 +1,13 @@
 body {
-	font-family: "Lato";
+	font-family: "Helvetica Neue", "Lato";
+	font-weight: 300;
 	height: 100vh;
 	min-height: 100vh;
 	max-height: 100vh;
+}
+
+h1, h2, h3 {
+	font-weight: 200;
 }
 
 #jobContainer {
@@ -22,12 +27,13 @@ body {
 	min-height: 100%;
 }
 
-svg {
-	height: 36vh;
-	min-height: 36vh;
-	max-height: 36vh;
-	box-shadow: 2px 2px 2px gray;
-	border: 1px solid gray;
+.ADR svg {
+	height: 40vh;
+	min-height: 40vh;
+	max-height: 40vh;
+	overflow: visible;
+	/*box-shadow: 2px 2px 2px gray;*/
+	/*border: 1px solid gray;*/
 }
 
 .magnet svg {
@@ -44,14 +50,22 @@ svg {
 }
 
 .DR svg {
-	height: 15vh;
-	min-height: 15vh;
-	max-height: 15vh;
+	height: 18vh;
+	min-height: 18vh;
+	max-height: 18vh;
 }
 
-.monitor {
+p.DRMonitor.ng-binding {
 	font-size: xx-large;
+	height: 9vh;
+	text-align: center;
+}
+
+p.ADRmonitor.ng-binding{
+	font-size: large;
 	height: 5vh;
+	text-align: center;
+	margin: 0px;
 }
 
 .subheader {

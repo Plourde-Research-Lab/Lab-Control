@@ -1,10 +1,12 @@
 <div class="row text-center">
 	<h1>Plourde Research Group</h1>
-	<h2>Fridge Control</h2>
 	<div class="col-lg-offset-2 col-lg-8">
 		<div class="row" ng-repeat="fridge in model.fridges">
 			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-right"><h3><a href="{{fridge.name | lowercase}}">{{fridge.name}}</a></h3></div>
 			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-left"><h3>{{fridge.status}}</h3></div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center"><h3><a href="liquifier">Liquifier</a></h3></div>
 		</div>
 	</div>
 </div>
