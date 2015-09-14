@@ -18,9 +18,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/client')));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/partials', express.static(__dirname + '/client/partials'));
-app.get('*', function(req, res) {
-    res.sendFile(express.static(__dirname + '/client/index.html'));
-});
+// app.get('*', function(req, res) {
+//     res.sendFile(express.static(__dirname + '/client/index.html'));
+// });
 
 app.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
@@ -37,7 +37,7 @@ var ADR1JobDB = mongoose.createConnection(ADR1ADDR + '/jobs');
 var ADR1ControlDB = mongoose.createConnection(ADR1ADDR + '/control');
 var ADR1DataDB = mongoose.createConnection(ADR1ADDR + '/data');
 var ADR2JobDB = mongoose.createConnection(ADR2ADDR + '/jobs');
-var ADR2ControlDB = mongoose.createConnection(ADR2ADDR + '/control');
+var ADR2ControlDB = mongoose.createConnection(ADR2ADDR + '/data');
 var ADR2DataDB = mongoose.createConnection(ADR2ADDR + '/data');
 var DR1DataDB = mongoose.createConnection(DR1ADDR + '/data');
 var DR2DataDB = mongoose.createConnection(DR2ADDR + '/dr2');
@@ -78,30 +78,41 @@ var ADRDataSchema = {
     percentComplete: Number,
     switchState: String
 };
-var controlSchema = {
-    controlState: String,
-    controlStateValue: String,
-    prevControlState: String,
-    maxCurrent: Number,
+// var controlSchema = {
+//     controlState: String,
+//     controlStateValue: String,
+//     prevControlState: String,
+//     maxCurrent: Number,
+//     maxVoltage: Number,
+//     minutesToMagup: Number,
+//     minutesToMagdown: Number
+// };
+// var statusSchema = {
+//     fridgeStatus: String, //Cold or Warm
+//     magnetStatus: String,
+//     magnetGoal: String,
+//     switchState: String
+// };
+
+var ADRControlSchema = {
+    timeStamp: Number,
+    fridgeStatus: String,
+    currentJob: String,
+    switchState: String,
+    currentLimit: Number,
     maxVoltage: Number,
-    minutesToMagup: Number,
-    minutesToMagdown: Number
-};
-var statusSchema = {
-    fridgeStatus: String, //Cold or Warm
-    magnetStatus: String,
-    magnetGoal: String,
-    switchState: String
-};
+    voltageStep: Number,
+    command: String
+}
 
 // Connect Schemas to Databases
 
 var ADR1Job = ADR1JobDB.model('ADR1Job', jobSchema);
-var ADR1Control = ADR1ControlDB.model('ADR1Control', controlSchema);
+var ADR1Control = ADR1ControlDB.model('ADR1Control', ADRControlSchema);
 var ADR1Data = ADR1DataDB.model('ADR1Data', ADRDataSchema);
 
 var ADR2Job = ADR2JobDB.model('ADR2Job', jobSchema);
-var ADR2Control = ADR2ControlDB.model('ADR2Control', controlSchema);
+var ADR2Control = ADR2ControlDB.model('ADR2Control', ADRControlSchema);
 var ADR2Data = ADR2DataDB.model('ADR2Data', ADRDataSchema);
 
 var DR1Data = DR1DataDB.model('DR1Data', DRDataSchema);
@@ -207,9 +218,9 @@ app.post('/removeJob2', function(req, res) {
 });
 
 app.get('/getData', function(req, res) {
-    switch (req.param('fridge')) {
+    switch (req.query.fridge) {
         case 'DR1':
-            DR1Data.find().limit(req.param('num'))
+            DR1Data.find().limit(req.query.num)
                 .sort({ timeStamp: -1}).exec(function(err, data) {
                 if (err || !data) console.log('No data found.');
                     else {
@@ -220,7 +231,7 @@ app.get('/getData', function(req, res) {
             break;
 
         case 'ADR2':
-            ADR2Data.find().limit(req.param('num'))
+            ADR2Data.find().limit(req.query.num)
                 .sort({ timeStamp: -1}).exec(function(err, data) {
             if (err || !data) console.log('No data found.');
                 else {
@@ -230,5 +241,46 @@ app.get('/getData', function(req, res) {
             });
             break;
 
+    }
+});
+
+app.get('/control', function (req, res) {
+    console.log(req.params)
+    console.log(req.query)
+    switch (req.query.fridge) {
+        case 'ADR1':
+        console.log('Changing ADR1Control')
+            ADR1Control.findOneAndUpdate({}, req.query.changes)
+                .exec(function(err, data) {
+                    if (err || !data) console.log('Error.');
+                        else {
+                            console.log(data);
+                            res.json(data);
+                            res.flush();
+                        }
+                });
+            break;
+
+        case 'ADR2':
+            console.log('Changing ADR2Control')
+            console.log(req.query.changes)
+            ADR2Control.findOneAndUpdate({}, {'$set': {'command': req.query.command}})
+                .exec(function(err, data) {
+                    if (err || !data) console.log('Error.');
+                        else {
+                            console.log(data);
+                            res.json(data);
+                            res.flush();
+                        }
+                });
+            // ADR2Control.find().limit(1).exec(function(err, data) {
+            //     if (err || !data) console.log('No data found.');
+            //     else {
+            //         console.log(data);
+            //         res.json(data);
+            //         res.flush();
+            //     }
+            // });
+            break;
     }
 });

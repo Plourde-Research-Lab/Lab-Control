@@ -304,7 +304,10 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
         var timeStep = 5; //Number of seconds between data collection
 
         $http.get('/getData', {
-            params: {num: variable / timeStep}
+            params: {
+                num: variable / timeStep,
+                fridge: 'ADR2'
+            }
         })
             .success(function(data, status, headers, config) {
                 // Fix this
@@ -383,20 +386,46 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
 
     $scope.magup = function() {
 
-        var magupJob = new function() {
-            this.jobType = 'Magup',
-            this.finishTime = soakJob.startTime;
-            this.startTime = new Date(this.finishTime - 60 * 60000);
-            this.completed = false;
-            this.percentDone = 0;
-            this.dateString = this.startTime.toDateString();
-            this.timeString = this.startTime.toTimeString();
-            this.scheduledOn = Date.now();
-        };
+        // var magupJob = new function() {
+        //     this.jobType = 'Magup',
+        //     this.finishTime = soakJob.startTime;
+        //     this.startTime = new Date(this.finishTime - 60 * 60000);
+        //     this.completed = false;
+        //     this.percentDone = 0;
+        //     this.dateString = this.startTime.toDateString();
+        //     this.timeString = this.startTime.toTimeString();
+        //     this.scheduledOn = Date.now();
+        // };
 
-        $http.post({}).
-        success({}).
-        error({});
+        // $http.post({}).
+        // success({}).
+        // error({});
+        console.log('Magup')
+        $http.get('/control', {
+            params: {
+                fridge: 'ADR2',
+                command: 'Magup'
+            }
+        })
+            .success(function (data, status, headers, config) {
+                if (status != 304) {
+                    console.log(data);
+                }
+            });
+    };
+
+    $scope.magdown = function () {
+        $http.get('/control', {
+            params: {
+                fridge: 'ADR2',
+                command: 'Magdown'
+            }
+        })
+            .success(function (data, status, headers, config) {
+                if (status != 304) {
+                    console.log(data)
+                }
+            });
     };
 
     $scope.init = function() {
