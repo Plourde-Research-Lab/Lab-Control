@@ -39,7 +39,9 @@ var ADR1DataDB = mongoose.createConnection(ADR1ADDR + '/data');
 var ADR2JobDB = mongoose.createConnection(ADR2ADDR + '/jobs');
 var ADR2ControlDB = mongoose.createConnection(ADR2ADDR + '/data');
 var ADR2DataDB = mongoose.createConnection(ADR2ADDR + '/data');
+var ADR2HistoryDB = mongoose.createConnection(ADR2ADDR + '/history');
 var DR1DataDB = mongoose.createConnection(DR1ADDR + '/data');
+var DR1HistoryDB = mongoose.createConnection(DR1ADDR + '/history')
 var DR2DataDB = mongoose.createConnection(DR2ADDR + '/dr2');
 
 
@@ -53,7 +55,8 @@ var jobSchema = {
     percentDone: Number,
     dateString: String,
     timeString: String,
-    scheduledOn: Date
+    scheduledOn: Date,
+    inProgress: Boolean
 };
 var DRDataSchema = {
     timeStamp: Number,
@@ -64,6 +67,18 @@ var DRDataSchema = {
     t6: Number,
     t7: Number,
     t8: Number
+};
+var DRHistorySchema = {
+    timeStamp: Number,
+    t1: Number,
+    t3: Number,
+    t4: Number,
+    t5: Number,
+    t6: Number,
+    t7: Number,
+    t8: Number,
+    note: String,
+    status: String
 };
 var ADRDataSchema = {
     timeStamp: Number,
@@ -78,21 +93,16 @@ var ADRDataSchema = {
     percentComplete: Number,
     switchState: String
 };
-// var controlSchema = {
-//     controlState: String,
-//     controlStateValue: String,
-//     prevControlState: String,
-//     maxCurrent: Number,
-//     maxVoltage: Number,
-//     minutesToMagup: Number,
-//     minutesToMagdown: Number
-// };
-// var statusSchema = {
-//     fridgeStatus: String, //Cold or Warm
-//     magnetStatus: String,
-//     magnetGoal: String,
-//     switchState: String
-// };
+
+var ADRHistorySchema = {
+    timeStamp: Number,
+    baseTemp: Number,
+    oneKTemp: Number,
+    threeKTemp: Number,
+    sixtyKTemp: Number,
+    note: String,
+    status: String
+};
 
 var ADRControlSchema = {
     timeStamp: Number,
@@ -114,25 +124,21 @@ var ADR1Data = ADR1DataDB.model('ADR1Data', ADRDataSchema);
 var ADR2Job = ADR2JobDB.model('ADR2Job', jobSchema);
 var ADR2Control = ADR2ControlDB.model('ADR2Control', ADRControlSchema);
 var ADR2Data = ADR2DataDB.model('ADR2Data', ADRDataSchema);
+var ADR2History = ADR2HistoryDB.model('ADR2History', ADRHistorySchema);
 
 var DR1Data = DR1DataDB.model('DR1Data', DRDataSchema);
 var DR2Data = DR2DataDB.model('DR2Data', DRDataSchema);
+var DR1History = DR1HistoryDB.model('DR1History', DRHistorySchema);
 
 // Get all jobs
-app.get('/getJobs1', function(req, res) {
+app.get('/getJobs', function(req, res) {
 
-    ADR1Job.find('', function(err, jobs) {
-        if (err || !jobs) console.log('No jobs found.');
-            else {
+    switch(req.query.fridge) {
+        case 'ADR1': var jobsDB = ADR1Job; break;
+        case 'ADR2': var jobsDB = ADR2Job; break;
+    }
 
-                res.send(jobs);
-            }
-    });
-});
-
-app.get('/getJobs2', function(req, res) {
-
-    ADR2Job.find('', function(err, jobs) {
+    jobsDB.find('', function(err, jobs) {
         if (err || !jobs) console.log('No jobs found.');
             else {
 
@@ -142,12 +148,18 @@ app.get('/getJobs2', function(req, res) {
 });
 
 // Add jobs
-app.post('/addJobs1', function(req, res) {
-    var data = req.body;
+app.post('/addJobs', function(req, res) {
+
+    switch(req.body.fridge) {
+        case 'ADR1': var jobsDB = ADR1Job; break;
+        case 'ADR2': var jobsDB = ADR2Job; break;
+    }
+
+    var data = JSON.parse(req.body.data);
     console.log('Recieved ' + data.length + ' jobs.');
 
     for (var i = data.length - 1; i >= 0; i--) {
-        var job = new ADR1Job;
+        var job = new jobsDB;
         job.type = data[i].type;
         job.finishTime = data[i].finishTime;
         job.startTime = data[i].startTime;
@@ -156,6 +168,7 @@ app.post('/addJobs1', function(req, res) {
         job.dateString = data[i].dateString;
         job.timeString = data[i].timeString;
         job.scheduledOn = data[i].scheduledOn;
+        job.inProgress = data[i].inProgress;
         job.save(function(err) {
             if (err) {
                 res.send('Error - server');
@@ -165,47 +178,16 @@ app.post('/addJobs1', function(req, res) {
     }
 });
 
-app.post('/addJobs2', function(req, res) {
-    var data = req.body;
-    console.log('Recieved ' + data.length + ' jobs.');
-
-    for (var i = data.length - 1; i >= 0; i--) {
-        var job = new ADR2Job;
-        job.type = data[i].type;
-        job.finishTime = data[i].finishTime;
-        job.startTime = data[i].startTime;
-        job.completed = data[i].completed;
-        job.percentDone = data[i].percentDone;
-        job.dateString = data[i].dateString;
-        job.timeString = data[i].timeString;
-        job.scheduledOn = data[i].scheduledOn;
-        job.save(function(err) {
-            if (err) {
-                res.send('Error - server');
-                console.log(err);
-            }else console.log('Success');
-        });
-    }
-});
-
 // Remove by id
-app.post('/removeJob1', function(req, res) {
-    var id = req.body._id;
-    ADR1Job.remove({_id: id}, function(err) {
-        if (!err) {
-            console.log('Job ' + id + ' removed.');
-            res.send('Job removed.');
-        } else {
-            console.log('Job not removed.');
-            console.log('err');
-            res.send('Job not removed. - server');
-        }
-    });
-});
+app.post('/removeJob', function  (req, res) {
 
-app.post('/removeJob2', function(req, res) {
-    var id = req.body._id;
-    ADR2Job.remove({_id: id}, function(err) {
+    switch(req.body.fridge) {
+        case 'ADR1': var jobsDB = ADR1Job; break;
+        case 'ADR2': var jobsDB = ADR2Job; break;
+    }
+
+    var id = JSON.parse(req.body.data)._id;
+    jobsDB.remove({_id: id}, function(err) {
         if (!err) {
             console.log('Job ' + id + ' removed.');
             res.send('Job removed.');
@@ -218,53 +200,32 @@ app.post('/removeJob2', function(req, res) {
 });
 
 app.get('/getData', function(req, res) {
-    switch (req.query.fridge) {
-        case 'DR1':
-            DR1Data.find().limit(req.query.num)
-                .sort({ timeStamp: -1}).exec(function(err, data) {
-                if (err || !data) console.log('No data found.');
-                    else {
-                        res.json(data);
-                        res.flush();
-                    }
-            });
-            break;
 
-        case 'ADR2':
-            ADR2Data.find().limit(req.query.num)
-                .sort({ timeStamp: -1}).exec(function(err, data) {
-            if (err || !data) console.log('No data found.');
-                else {
-                    res.json(data);
-                    res.flush();
-                }
-            });
-            break;
-
+    switch(req.query.fridge) {
+        case 'DR1': var dataDB = DR1Data; break;
+        case 'DR2': var dataDB = DR2Data; break;
+        case 'ADR1': var dataDB = ADR1Data; break;
+        case 'ADR2': var dataDB = ADR2Data; break;
     }
+
+    dataDB.find().limit(req.query.num)
+        .sort({ timeStamp: -1}).exec(function(err, data) {
+    if (err || !data) console.log('No data found.');
+        else {
+            res.json(data);
+            res.flush();
+        }
+    });
 });
 
 app.get('/control', function (req, res) {
-    console.log(req.params)
-    console.log(req.query)
-    switch (req.query.fridge) {
-        case 'ADR1':
-        console.log('Changing ADR1Control')
-            ADR1Control.findOneAndUpdate({}, req.query.changes)
-                .exec(function(err, data) {
-                    if (err || !data) console.log('Error.');
-                        else {
-                            console.log(data);
-                            res.json(data);
-                            res.flush();
-                        }
-                });
-            break;
 
-        case 'ADR2':
-            console.log('Changing ADR2Control')
-            console.log(req.query.changes)
-            ADR2Control.findOneAndUpdate({}, {'$set': {'command': req.query.command}})
+    switch(req.query.fridge) {
+        case 'ADR1': var dataDB = ADR1Control; break;
+        case 'ADR2': var dataDB = ADR2Control; break;
+    }
+
+    dataDB.findOneAndUpdate({}, {'$set': {'command': req.query.command}})
                 .exec(function(err, data) {
                     if (err || !data) console.log('Error.');
                         else {
@@ -273,14 +234,83 @@ app.get('/control', function (req, res) {
                             res.flush();
                         }
                 });
-            // ADR2Control.find().limit(1).exec(function(err, data) {
-            //     if (err || !data) console.log('No data found.');
-            //     else {
-            //         console.log(data);
-            //         res.json(data);
-            //         res.flush();
-            //     }
-            // });
-            break;
-    }
+
+
+
+    // switch (req.query.fridge) {
+    //     case 'ADR1':
+    //     console.log('Changing ADR1Control')
+    //         ADR1Control.findOneAndUpdate({}, req.query.changes)
+    //             .exec(function(err, data) {
+    //                 if (err || !data) console.log('Error.');
+    //                     else {
+    //                         console.log(data);
+    //                         res.json(data);
+    //                         res.flush();
+    //                     }
+    //             });
+    //         break;
+
+    //     case 'ADR2':
+    //         console.log('Changing ADR2Control')
+    //         console.log(req.query.changes)
+    //         ADR2Control.findOneAndUpdate({}, {'$set': {'command': req.query.command}})
+    //             .exec(function(err, data) {
+    //                 if (err || !data) console.log('Error.');
+    //                     else {
+    //                         console.log(data);
+    //                         res.json(data);
+    //                         res.flush();
+    //                     }
+    //             });
+    //         break;
+    // }
 });
+
+app.get('/history', function (req, res) {
+    console.log('Getting History')
+
+    switch(req.query.fridge) {
+        case 'DR1': var dataDB = DR1History; break;
+        case 'DR2': var dataDB = DR2History; break;
+        case 'ADR1': var dataDB = ADR1History; break;
+        case 'ADR2': var dataDB = ADR2History; break;
+    }
+
+
+    dataDB.find()
+    .sort({timeStamp: -1}).exec(function  (err, data) {
+        if (err || !data) console.log('No History Found.');
+            else {
+                res.json(data);
+                res.flush();
+            }
+    });
+
+});
+
+app.post('/history', function  (req, res) {
+    console.log('Adding History Point')
+
+    switch(req.body.fridge) {
+        case 'ADR1': var historyDB = ADR1History; var dataDB = ADR1Data; break;
+        case 'ADR2': var historyDB = ADR2History; var dataDB = ADR2Data; break;
+    }
+
+     dataDB.find().limit(1).sort({ timeStamp: -1}).exec(function(err, data) {
+            if (err || !data) console.log('No data found.');
+                else {
+                    console.log("inserting")
+                    console.log(req.body)
+                    var point = new historyDB(data[0], {'note': req.body.note});
+                    point.note = req.body.note
+                    point.save(function(err) {
+                        if (err) {
+                            res.send('Error - server');
+                            console.log(err);
+                        } else console.log('Success');
+                    });
+                }
+            });
+
+})

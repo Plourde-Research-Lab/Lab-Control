@@ -235,6 +235,46 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
         }
     };
 
+    $scope.historyChartOptions = {
+        chart: {
+            type: 'lineWithFocusChart',
+            margin: {
+                top: 10,
+                right: 20,
+                bottom: 60,
+                left: 40
+            },
+            x: function(d) { return d.x; },
+            y: function(d) { return d.y; },
+            useInteractiveGuideline: false,
+            showLegend: true,
+            transitionDuration: 0,
+            tooltips: true,
+            yAxis: {
+                tickFormat: function(d) {
+                   return d3.format('.4n')(d);
+                }
+            },
+            y2Axis: {
+                tickFormat: function(d) {
+                    return d3.format('.4n')(d);
+                }
+            },
+            y3Axis: {
+                axisLabel: 'y3 axis'
+            },
+            xAxis: {
+                tickFormat: function(d) {
+                    return d3.time.format.utc('%X')(new Date(d * 1000));
+                }
+            },
+            x2Axis: {
+                tickFormat: function(d) {
+                    return d3.time.format.utc('%a,%-I%p')(new Date(d * 1000));
+                }
+            }
+        }
+    };
 
     $scope.tempData = [
         [{
@@ -299,6 +339,25 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
         magupPercentage: '60',
         percentComplete: '0'
     };
+
+    $scope.historyData = [
+        {
+            key: '60K Temperature',
+            values: []
+        },
+        {
+            key: '3K Temperature',
+            values: []
+        },
+        {
+            key: '1K Temperature',
+            values: []
+        },
+        {
+            key: 'Base Temperature',
+            values: []
+        }
+    ];
 
     $scope.getLogData = function(variable) {
         var timeStep = 5; //Number of seconds between data collection
@@ -383,23 +442,45 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
         }
     };
 
+    $scope.getHistoryData = function  () {
+        $http.get('/history', {
+            params: {
+                fridge: 'ADR2'
+            }
+        })
+            .success(function(data, status, headers, config) {
+                // Fix this
+                $scope.historyData[0].values = [];
+                $scope.historyData[1].values = [];
+                $scope.historyData[2].values = [];
+                $scope.historyData[3].values = [];
+                data.forEach(function(datapoint, index) {
+                    $scope.historyData[0].values.push({x: datapoint.timeStamp, y: datapoint.sixtyKTemp});
+                    $scope.historyData[1].values.push({x: datapoint.timeStamp, y: datapoint.threeKTemp});
+                    $scope.historyData[2].values.push({x: datapoint.timeStamp, y: datapoint.oneKTemp});
+                    $scope.historyData[3].values.push({x: datapoint.timeStamp, y: datapoint.baseTemp});
+                });
+            });
+    };
+
+    $scope.addHistoryPoint = function (historyNote) {
+        $http.post('/history', {
+            fridge: 'ADR2',
+            note: historyNote
+        })
+            .success(function (data, status, headers, config) {
+                    if (status != 304) {
+                        console.log(data)
+                    }
+                })
+            .then(function (response) {
+                $scope.getHistoryData()
+            });
+        $scope.getHistoryData()
+    };
+
 
     $scope.magup = function() {
-
-        // var magupJob = new function() {
-        //     this.jobType = 'Magup',
-        //     this.finishTime = soakJob.startTime;
-        //     this.startTime = new Date(this.finishTime - 60 * 60000);
-        //     this.completed = false;
-        //     this.percentDone = 0;
-        //     this.dateString = this.startTime.toDateString();
-        //     this.timeString = this.startTime.toTimeString();
-        //     this.scheduledOn = Date.now();
-        // };
-
-        // $http.post({}).
-        // success({}).
-        // error({});
         console.log('Magup')
         $http.get('/control', {
             params: {
@@ -428,6 +509,20 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
             });
     };
 
+    $scope.soak = function() {
+        $http.get('/control', {
+            params: {
+                fridge: 'ADR2',
+                command: 'Soak'
+            }
+        })
+            .success(function (data, status, headers, config) {
+                if (status != 304) {
+                    console.log(data)
+                }
+            });
+    };
+
     $scope.init = function() {
 
         $timeout(function() {
@@ -436,6 +531,8 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
 
 
         $scope.temp = [{},{},{},{}];
+
+        $scope.getHistoryData();
     };
 
     $scope.init();
@@ -732,6 +829,7 @@ angular.module('labControlApp').controller('JobCtrl', [
             this.dateString = this.startTime.toDateString();
             this.timeString = this.startTime.toTimeString();
             this.scheduledOn = Date.now();
+            this.inProgress = false;
         };
 
         var soakJob = new function() {
@@ -744,6 +842,7 @@ angular.module('labControlApp').controller('JobCtrl', [
             this.dateString = this.startTime.toDateString();
             this.timeString = this.startTime.toTimeString();
             this.scheduledOn = Date.now();
+            this.inProgress = false;
         };
 
         var magupJob = new function() {
@@ -755,6 +854,7 @@ angular.module('labControlApp').controller('JobCtrl', [
             this.dateString = this.startTime.toDateString();
             this.timeString = this.startTime.toTimeString();
             this.scheduledOn = Date.now();
+            this.inProgress = false;
         };
 
         $scope.newJobs.push(magdownJob, soakJob, magupJob);
@@ -765,69 +865,48 @@ angular.module('labControlApp').controller('JobCtrl', [
     };
 
     $scope.getJobs = function() {
-        $http({
-            method: 'GET',
-            url: '/getJobs1',
-            params: $scope.adrs[0]
-        }).
-        success(function(response) {
-            $scope.adrs[0].jobs = response;
-            console.log(response.length + ' jobs loaded for ADR1.');
-        }).
-        error(function(err) {
-            console.log(err);
-        });
-
-        $http({
-            method: 'GET',
-            url: '/getJobs2',
-            params: $scope.adrs[1]
-        }).
-        success(function(response) {
-            $scope.adrs[1].jobs = response;
-            console.log(response.length + ' jobs loaded for ADR2.');
-        }).
-        error(function(err) {
-            console.log(err);
-        });
+        angular.forEach($scope.adrs, function(adr) {
+            $http.get('/getJobs', {
+                params: {
+                    fridge: adr.name
+                }
+            })
+                .success(function (data, status, headers, config) {
+                    if (status != 304) {
+                        adr.jobs = data;
+                        console.log(data.length + ' jobs loaded for ' + adr.name);
+                    }
+                    
+                });
+        })
     };
 
     $scope.saveJobs = function() {
         console.log('Saving ' + $scope.newJobs.length + ' jobs');
-        var urlString = '/addJobs' + $scope.selectedADR.name.slice(-1);
-        $http({
-            method: 'POST',
-            data: JSON.stringify($scope.newJobs),
-            url: urlString
-        }).
-        success(function(response) {
-            console.log('Send was a success-client');
-            console.log(response);
-            scope.newJobs = [];
-        }).
-        error(function(error) {
-            console.log(error);
-        });
+        $http.post('/addJobs', {
+            fridge: $scope.selectedADR.name,
+            data: JSON.stringify($scope.newJobs)
+        })
+            .success(function (data, status, headers, config) {
+                    if (status != 304) {
+                        console.log(data)
+                    }
+                });
 
         $scope.newJobs = [];
         $scope.getJobs();
     };
 
     $scope.removeJob = function(job) {
-        console.log(job);
-        var urlString = '/removeJob' + $scope.selectedADR.name.slice(-1);
-        $http({
-            method: 'POST',
-            data: JSON.stringify(job),
-            url: urlString
-        }).
-        success(function(response) {
-            console.log('Removal request was a success-client');
-            console.log(response);
-        }).
-        error(function(error) {
-            console.log(error);
-        });
+        $http.post('/removeJob', {
+            fridge: $scope.selectedADR.name,
+            data: JSON.stringify(job)
+        })
+            .success(function  (data, status, headers, config) {
+                if (status != 304) {
+                    console.log(data)
+                }
+            })
 
         $scope.getJobs();
     };
