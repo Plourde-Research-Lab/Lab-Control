@@ -227,48 +227,45 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
             (array[array.length - 1]['x'] - array[0]['x']) * 1000).toFixed(3);
     };
 
-    $scope.getChartData = function() {
-        fridgeService.getData($scope.name, 1)
+    $scope.getChartData = function(num) {
+        fridgeService.getData($scope.name, num)
             .then(function (response) {
-                $scope.updateChartData(response.data[0])
+                $scope.updateChartData(response.data)
             });
         $timeout($scope.getChartData, 5050);
     };
 
-    $scope.updateChartData = function(data) {
-        $scope.timeStamp = data.timeStamp;
-        $scope.tempData[0][0].temp = data.sixtyKTemp.toFixed(4);
-        $scope.tempData[1][0].temp = data.threeKTemp.toFixed(3);
-        $scope.tempData[2][0].temp = data.oneKTemp.toFixed(3);
-        $scope.tempData[3][0].temp = data.baseTemp;//.toFixed(4);
-        $scope.v = data.magnetVoltage.toFixed(4);
-        $scope.i = data.psCurrent.toFixed(4);
-        $scope.fridgeData.currentState = data.currentJob;
-        $scope.fridgeData.switchState = data.switchState;
-        $scope.percentComplete = data.percentComplete;
+    $scope.updateChartData = function(datas) {
+        datas.reverse().forEach(function (data, index, array) {
+            $scope.timeStamp = data.timeStamp;
+            $scope.tempData[0][0].temp = data.sixtyKTemp.toFixed(4);
+            $scope.tempData[1][0].temp = data.threeKTemp.toFixed(3);
+            $scope.tempData[2][0].temp = data.oneKTemp.toFixed(3);
+            $scope.tempData[3][0].temp = data.baseTemp;//.toFixed(4);
+            $scope.v = data.magnetVoltage.toFixed(4);
+            $scope.i = data.psCurrent.toFixed(4);
+            $scope.percentComplete = data.percentComplete;
+            if ($scope.tempData[0][0].temp < 300) {
+                $scope.tempData.forEach(function(element, index) {
+                    element[0].values.push({x: $scope.timeStamp, y: element[0].temp});
+                    element[0].delta = $scope.calculateTempDelta(element[0].values);
+                });
 
-        if ($scope.tempData[0][0].temp < 300) {
-            $scope.fridgeData.currentState = 'Cold';
-            $scope.tempData.forEach(function(element, index) {
-                element[0].values.push({x: $scope.timeStamp, y: element[0].temp});
-                element[0].delta = $scope.calculateTempDelta(element[0].values);
-            });
-
-            $scope.magnetData[0][0].values.push({x: $scope.timeStamp, y: $scope.v});
-            $scope.magnetData[1][0].values.push({x: $scope.timeStamp, y: $scope.i});
-            // $scope.$apply();
-            if ($scope.tempData[0][0].values.length > 60) {
-                $scope.tempData[0][0].values.shift();
-                $scope.tempData[1][0].values.shift();
-                $scope.tempData[2][0].values.shift();
-                $scope.tempData[3][0].values.shift();
-                $scope.magnetData[0][0].values.shift();
-                $scope.magnetData[1][0].values.shift();
+                $scope.magnetData[0][0].values.push({x: $scope.timeStamp, y: $scope.v});
+                $scope.magnetData[1][0].values.push({x: $scope.timeStamp, y: $scope.i});
+                // $scope.$apply();
+                if ($scope.tempData[0][0].values.length > 60) {
+                    $scope.tempData[0][0].values.shift();
+                    $scope.tempData[1][0].values.shift();
+                    $scope.tempData[2][0].values.shift();
+                    $scope.tempData[3][0].values.shift();
+                    $scope.magnetData[0][0].values.shift();
+                    $scope.magnetData[1][0].values.shift();
+                }
+            } else {
+                console.log($scope.fridgeData.currentState);
             }
-        } else {
-            $scope.fridgeData.currentState = 'Warm';
-            console.log($scope.fridgeData.currentState);
-        }
+        });
     };
 
     $scope.getHistoryData = function  () {
@@ -297,7 +294,8 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
     $scope.magup = function() {
         ADRService.magup($scope.name)
             .then(function (response) {
-                console.log('Magging up') 
+                console.log('Magging up')
+                $scope.getState()
             });
     };
 
@@ -305,13 +303,51 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
         ADRService.magdown($scope.name)
             .then(function (response) {
                 console.log('Magging up')
+                $scope.getState()
             })
     };
 
+    $scope.magupFlag = function () {
+        if ($scope.fridgeData.currentJob == "Magup") {
+            return true
+        } else {
+            return false
+        }
+    };
+
+    $scope.soakFlag = function () {
+        if ($scope.fridgeData.currentJob == "Soak") {
+            return true
+        } else {
+            return false
+        }
+
+        $scope.getState()
+    };
+
+    $scope.magdownFlag = function () {
+        if ($scope.fridgeData.currentJob == "Magdown") {
+            return true
+        } else {
+            return false
+        }
+
+        $scope.getState()
+    };
+
+    $scope.getState = function () {
+        fridgeService.state($scope.name)
+            .then(function (response) {
+                $scope.fridgeData.currentState = response.data.fridgeStatus
+                $scope.fridgeData.currentJob = response.data.currentJob
+            })
+    }
+
     $scope.init = function() {
         $scope.name = 'ADR2'
-        $scope.getChartData();
+        $scope.getState()
         $scope.temp = [{},{},{},{}];
+        $scope.getChartData(60);
         $scope.getHistoryData();
     };
 

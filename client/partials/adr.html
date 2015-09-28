@@ -21,10 +21,13 @@
 	    	<div class="row text-center">
 	    		<h1>Magup</h1>
 		    	<div class="col-lg-offset-3 col-lg-6 well">
-		    		<button type="button" class="btn btn-info" ng-click="magup();">Start Magup</button>
-					<div>
-						<br>
-						<progressbar class="progress-striped" value="percentComplete"></progressbar>
+		    		<div class="control-group">
+		    			<button type="button" class="btn btn-info" ng-click="magup();" ng-disabled="magupFlag() || soakFlag();">Start Magup</button>
+		    		</div>
+		    		<div class="form-group">&nbsp;</div>
+					<div ng-show="magupFlag();" class="alert alert-warning">
+						<h1 style="font-weight:bold;font-size:xx-large;">Magging up</h1>
+						<progressbar class="progress-striped active" value="percentComplete">{{i}} Amps</progressbar>
 					</div>
 		    	</div>
 		    	
@@ -33,8 +36,9 @@
 		        <h1>Soak</h1>
 		        <div class="col-lg-offset-3 col-lg-6 well">
 		        	<div class="form-group">
-			        	<h1 style="font-weight:bold;text-size:bold;">Switch is {{fridgeData.switchState}}</h1>
-			        	<button class="btn btn-danger" ng-click="changeSwitch()">{{fridgeData.switchState === "Closed" ? "Open": "Close"}} Switch</button>
+		        		<div class="alert alert-danger" ng-show="soakFlag();" style="font-weight:bold;font-size:xx-large;">Magnet is soaking</div>
+			        	<!-- <h1 style="font-weight:bold;text-size:bold;">Switch is {{fridgeData.switchState}}</h1> -->
+			        	<button class="btn btn-danger" ng-click="changeSwitch()" ng-disabled="true">{{fridgeData.switchState === "Closed" ? "Open": "Close"}} Switch</button>
 		        	</div>
 					<div ng-init="soakCollapse=true" collapse="soakCollapse">
 						<progressbar class="progress-striped" value="soakPercentComplete"></progressbar>
@@ -43,13 +47,17 @@
 		    </div>
 		    <div class="row text-center">
 		        <h1>Magdown</h1>
-		        <div class="well col-lg-offset-3 col-lg-6">
-			        <div class="form-group">
-			        	<button class="btn" ng-click="magdown();magdownCollapse=false">Start Magdown</button>
-			        </div>
-					<div>
-						<progressbar class="progress-striped" value="percentComplete"></progressbar>
+		        <div class="col-lg-offset-3 col-lg-6 well">
+		        	<div class="control-group">
+			        	<button type="button" class="btn btn-info" ng-click="magdown();" ng-disabled="magdownFlag();">Start Magdown</button>
+		        	</div>
+		        	<div class="form-group">&nbsp;</div>
+					<div ng-show="magdownFlag();" class="alert alert-info">
+						<h1 style="font-weight:bold;font-size:xx-large;">Magging Down</h1>
+						<progressbar class="progress-striped active" value="percentComplete">{{i}} Amps</progressbar>
 					</div>
+
+
 		        </div>
 		    </div>
     	</tab>

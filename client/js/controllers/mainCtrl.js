@@ -34,12 +34,10 @@ angular.module('labControlApp')
             fridgeService.state(fridge.name)
                 .then(function (response) {
                     if (response.status != 304 && response.data != null) {
-                        console.log(response)
                         fridge.status = response.data.fridgeStatus                        
                     } else {
                         fridge.status = "Not Connected"
-                    }
-
+                    };
                 });
             });
     };

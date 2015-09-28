@@ -131,7 +131,6 @@ var DR2Data = DR2DataDB.model('DR2Data', DRDataSchema);
 var DR1History = DR1HistoryDB.model('DR1History', DRHistorySchema);
 
 //Get status of all fridges
-
 app.get('/status', function (req, res) {
     switch(req.query.fridge) {
         case 'ADR1': var dataDB = ADR1Control; break;
@@ -142,7 +141,7 @@ app.get('/status', function (req, res) {
     dataDB.findOne({}).exec(function (err, data) {
         res.json(data)
     })
-})
+});
 
 // Get all jobs
 app.get('/getJobs', function (req, res) {
@@ -213,6 +212,7 @@ app.post('/removeJob', function (req, res) {
     });
 });
 
+// Get Data for fridge
 app.get('/getData', function (req, res) {
 
     switch(req.query.fridge) {
@@ -232,6 +232,7 @@ app.get('/getData', function (req, res) {
     });
 });
 
+// Set Controls for ADRs
 app.get('/control', function (req, res) {
 
     switch(req.query.fridge) {
@@ -250,6 +251,7 @@ app.get('/control', function (req, res) {
                 });
 });
 
+// Get History Data
 app.get('/history', function (req, res) {
     console.log('Getting History')
 
@@ -269,9 +271,9 @@ app.get('/history', function (req, res) {
                 res.flush();
             }
     });
-
 });
 
+// Post History Data
 app.post('/history', function  (req, res) {
     console.log('Adding History Point')
 
@@ -295,5 +297,4 @@ app.post('/history', function  (req, res) {
                     });
                 }
             });
-
 })

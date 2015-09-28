@@ -72,3 +72,9 @@ Start Magup to 420mV at Sun, 09/27/15 18:09:20
 Start Soak at Sun, 09/27/15 18:09:57
 Start Soak at Sun, 09/27/15 18:09:57
 Start Magdown at Sun, 09/27/15 18:10:08
+Start Magup to 410mV at Mon, 09/28/15 07:43:35
+Start Soak at Mon, 09/28/15 09:16:54
+Soaked for 0 days, 0h: 44m: 28s
+Start Magdown at Mon, 09/28/15 10:01:23
+Start Magup to 410mV at Mon, 09/28/15 10:04:22
+Start Magdown at Mon, 09/28/15 10:06:50
