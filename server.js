@@ -11,13 +11,14 @@ app.set('port', process.env.PORT || 80);
 
 
 app.use(compress());
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/client')));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/partials', express.static(__dirname + '/client/partials'));
+
 // app.get('*', function(req, res) {
 //     res.sendFile(express.static(__dirname + '/client/index.html'));
 // });

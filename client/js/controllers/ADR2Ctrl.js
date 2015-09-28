@@ -227,12 +227,17 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
             (array[array.length - 1]['x'] - array[0]['x']) * 1000).toFixed(3);
     };
 
+    var timeoutChart = $timeout(function () {
+            $scope.getChartData
+        }, 5050);
+
     $scope.getChartData = function(num) {
         fridgeService.getData($scope.name, num)
             .then(function (response) {
                 $scope.updateChartData(response.data)
             });
-        $timeout($scope.getChartData, 5050);
+        $scope.chartTimeout = $timeout($scope.getChartData, 5050);
+        // timeoutChart();
     };
 
     $scope.updateChartData = function(datas) {
@@ -308,11 +313,13 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
     };
 
     $scope.magupFlag = function () {
-        if ($scope.fridgeData.currentJob == "Magup") {
-            return true
-        } else {
+        if ($scope.fridgeData.currentState.indexOf("Cold") > -1) {
             return false
+        } else {
+            return true
         }
+        console.log('blah')
+        $scope.getState()
     };
 
     $scope.soakFlag = function () {
@@ -326,10 +333,10 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
     };
 
     $scope.magdownFlag = function () {
-        if ($scope.fridgeData.currentJob == "Magdown") {
-            return true
-        } else {
+        if ($scope.fridgeData.currentJob == "Magup" || $scope.fridgeData.currentJob == "Soak") {
             return false
+        } else {
+            return true
         }
 
         $scope.getState()
@@ -352,5 +359,10 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
     };
 
     $scope.init();
+
+    $scope.$on('$destory', function () {
+        console.log('destroying')
+        $timeout.cancel($scope.chartTimeout);
+    });
 
 }]);
