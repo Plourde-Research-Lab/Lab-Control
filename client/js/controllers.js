@@ -2,8 +2,8 @@
 
 angular.module('labControlApp')
     .controller('MainCtrl', [
-        '$scope', '$location',
-        function($scope, $location) {
+        '$scope', '$location', '$http',
+        function($scope, $location, $http) {
     $scope.model = {
         message: 'This is the main page controller',
         fridges: [
@@ -30,10 +30,25 @@ angular.module('labControlApp')
         ]
     };
     $scope.$location = $location;
+
+    $scope.getStatus = function () {
+        $http.get('/status')
+            .success(function  (data, status, headers, config) {
+                if (status != 304) {
+                    $scope.model.fridges[2].status = data['command']
+
+                }
+            });
+    };
+
+    $scope.init = function () {
+            $scope.getStatus()
+    };
+
+    $scope.init()
 }]);
 
-angular.module('labControlApp')
-    .controller('ADR1Ctrl', ['$scope', '$http', function($scope, $http) {
+angular.module('labControlApp').controller('ADR1Ctrl', ['$scope', '$http', function($scope, $http) {
     $scope.model = {
         message: 'This is the controller for dealing with ADR1.'
     };

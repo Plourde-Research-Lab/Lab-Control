@@ -9,11 +9,11 @@ labControlApp.config(['$routeProvider', '$locationProvider',
     $routeProvider.
         when('/', {
             templateUrl: 'partials/index.html',
-            controller: 'MainCtrl'
+            controller: 'mainCtrl'
         }).
         when('/jobs', {
             templateUrl: 'partials/jobs.html',
-            controller: 'JobCtrl'
+            controller: 'jobCtrl'
         }).
         when('/dr1', {
             templateUrl: 'partials/dr.html',
@@ -26,6 +26,7 @@ labControlApp.config(['$routeProvider', '$locationProvider',
         when('/adr1', {
             templateUrl: 'partials/adr.html',
             controller: 'ADR1Ctrl'
+            // resolve: resolveController('/js/controllers/ADR2Ctrl.js')
         }).
         when('/adr2', {
             templateUrl: 'partials/adr.html',

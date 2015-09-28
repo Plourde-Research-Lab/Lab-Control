@@ -130,8 +130,22 @@ var DR1Data = DR1DataDB.model('DR1Data', DRDataSchema);
 var DR2Data = DR2DataDB.model('DR2Data', DRDataSchema);
 var DR1History = DR1HistoryDB.model('DR1History', DRHistorySchema);
 
+//Get status of all fridges
+
+app.get('/status', function (req, res) {
+    switch(req.query.fridge) {
+        case 'ADR1': var dataDB = ADR1Control; break;
+        case 'ADR2': var dataDB = ADR2Control; break;
+        case 'DR1': var dataDB = DR1Data; break;
+        case 'DR2': var dataDB = DR2Data; break;
+    }
+    dataDB.findOne({}).exec(function (err, data) {
+        res.json(data)
+    })
+})
+
 // Get all jobs
-app.get('/getJobs', function(req, res) {
+app.get('/getJobs', function (req, res) {
 
     switch(req.query.fridge) {
         case 'ADR1': var jobsDB = ADR1Job; break;
@@ -148,7 +162,7 @@ app.get('/getJobs', function(req, res) {
 });
 
 // Add jobs
-app.post('/addJobs', function(req, res) {
+app.post('/addJobs', function (req, res) {
 
     switch(req.body.fridge) {
         case 'ADR1': var jobsDB = ADR1Job; break;
@@ -179,7 +193,7 @@ app.post('/addJobs', function(req, res) {
 });
 
 // Remove by id
-app.post('/removeJob', function  (req, res) {
+app.post('/removeJob', function (req, res) {
 
     switch(req.body.fridge) {
         case 'ADR1': var jobsDB = ADR1Job; break;
@@ -199,7 +213,7 @@ app.post('/removeJob', function  (req, res) {
     });
 });
 
-app.get('/getData', function(req, res) {
+app.get('/getData', function (req, res) {
 
     switch(req.query.fridge) {
         case 'DR1': var dataDB = DR1Data; break;
@@ -234,37 +248,6 @@ app.get('/control', function (req, res) {
                             res.flush();
                         }
                 });
-
-
-
-    // switch (req.query.fridge) {
-    //     case 'ADR1':
-    //     console.log('Changing ADR1Control')
-    //         ADR1Control.findOneAndUpdate({}, req.query.changes)
-    //             .exec(function(err, data) {
-    //                 if (err || !data) console.log('Error.');
-    //                     else {
-    //                         console.log(data);
-    //                         res.json(data);
-    //                         res.flush();
-    //                     }
-    //             });
-    //         break;
-
-    //     case 'ADR2':
-    //         console.log('Changing ADR2Control')
-    //         console.log(req.query.changes)
-    //         ADR2Control.findOneAndUpdate({}, {'$set': {'command': req.query.command}})
-    //             .exec(function(err, data) {
-    //                 if (err || !data) console.log('Error.');
-    //                     else {
-    //                         console.log(data);
-    //                         res.json(data);
-    //                         res.flush();
-    //                     }
-    //             });
-    //         break;
-    // }
 });
 
 app.get('/history', function (req, res) {

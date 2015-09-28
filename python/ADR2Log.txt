@@ -37,3 +37,38 @@ Start Magup at 10:05:16
 Start Soak at 10:05:27
 Start Magdown at 12:59:50
 Start Magup at 08:24:44
+Start Soak at 09:00:06
+Start Magup at Thu, 09/24/15 10:02:49
+Start Soak at Thu, 09/24/15 10:04:45
+Start Magup at Thu, 09/24/15 10:12:35
+Start Soak at Thu, 09/24/15 10:15:23
+Start Magup at Thu, 09/24/15 10:38:41
+Start Soak at Thu, 09/24/15 10:39:44
+Start Magdown at Thu, 09/24/15 12:14:33
+Start Magdown at Sat, 09/26/15 13:30:25
+Start Soak at Sat, 09/26/15 14:07:02
+Start Soak at Sat, 09/26/15 14:18:18
+Start Soak at Sat, 09/26/15 14:23:18
+Start Soak at Sat, 09/26/15 14:28:02
+Start Magdown at Sat, 09/26/15 14:32:51
+Start Magdown at Sat, 09/26/15 15:29:03
+Start Magup to 500mV at Sun, 09/27/15 09:00:23
+Start Magdown at Sun, 09/27/15 09:36:43
+Start Magup to 400mV at Sun, 09/27/15 13:57:17
+Start Soak at Sun, 09/27/15 14:38:56
+Start Magup to 400mV at Sun, 09/27/15 14:52:24
+Start Soak at Sun, 09/27/15 14:52:35
+Start Magup to 430mV at Sun, 09/27/15 15:22:31
+Start Soak at Sun, 09/27/15 15:25:20
+Start Magup to 440mV at Sun, 09/27/15 15:46:55
+Start Soak at Sun, 09/27/15 15:48:09
+Start Soak at Sun, 09/27/15 15:48:09
+Start Magdown at Sun, 09/27/15 18:04:13
+Start Magup to 440mV at Sun, 09/27/15 18:05:11
+Start Soak at Sun, 09/27/15 18:07:08
+Start Soak at Sun, 09/27/15 18:07:08
+Start Magdown at Sun, 09/27/15 18:07:13
+Start Magup to 420mV at Sun, 09/27/15 18:09:20
+Start Soak at Sun, 09/27/15 18:09:57
+Start Soak at Sun, 09/27/15 18:09:57
+Start Magdown at Sun, 09/27/15 18:10:08
