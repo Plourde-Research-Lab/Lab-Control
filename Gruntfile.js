@@ -23,7 +23,7 @@ module.exports = function(grunt) {
         files: ['client/src/css/**/*.css']
       },
       js: {
-        files: ['public/src/js/**/*.js'],
+        files: ['client/js/**/*.js', 'server/**/*.js', ''],
         tasks: ['jshint']
       }
     },
