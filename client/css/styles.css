@@ -1,5 +1,5 @@
 body {
-	font-family: "Helvetica Neue", "Lato";
+	font-family: -apple-system, "Helvetica Neue", "Lato";
 	font-weight: 300;
 	height: 100vh;
 	min-height: 100vh;
@@ -28,18 +28,21 @@ h1, h2, h3 {
 }
 
 .ADR svg {
-	height: 40vh;
-	min-height: 40vh;
-	max-height: 40vh;
+	height: 38vh;
+	min-height: 38vh;
+	max-height: 38vh;
 	overflow: visible;
 	/*box-shadow: 2px 2px 2px gray;*/
 	/*border: 1px solid gray;*/
+	margin-bottom: 1vh;
 }
 
 .magnet svg {
 	height: 40vh;
 	min-height: 40vh;
 	max-height: 40vh;
+	overflow: visible;
+	margin-bottom: 1vh;
 }
 
 .log svg {
@@ -53,6 +56,8 @@ h1, h2, h3 {
 	height: 18vh;
 	min-height: 18vh;
 	max-height: 18vh;
+	overflow: visible;
+	margin-bottom: 1vh;
 }
 
 p.DRMonitor.ng-binding {

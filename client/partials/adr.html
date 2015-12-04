@@ -31,9 +31,9 @@
 		    			<button type="button" class="btn btn-info" ng-click="magup();" ng-disabled="magupFlag() || soakFlag();">Start Magup</button>
 		    		</div>
 		    		<div class="form-group">&nbsp;</div>
-					<div ng-hide="magupFlag();" class="alert alert-warning">
+					<div ng-show="magupFlag();" class="alert alert-warning">
 						<h1 style="font-weight:bold;font-size:xx-large;">Magging up</h1>
-						<progressbar class="progress-striped active" value="percentComplete">{{i}} Amps</progressbar>
+						<progressbar class="progress-striped active" value="percentComplete">{{i}} A</progressbar>
 					</div>
 		    	</div>
 		    	
@@ -58,7 +58,7 @@
 			        	<button type="button" class="btn btn-info" ng-click="magdown();" ng-disabled="magdownFlag();">Start Magdown</button>
 		        	</div>
 		        	<div class="form-group">&nbsp;</div>
-					<div ng-hide="magdownFlag();" class="alert alert-info">
+					<div ng-show="magdownFlag();" class="alert alert-info">
 						<h1 style="font-weight:bold;font-size:xx-large;">Magging Down</h1>
 						<progressbar class="progress-striped active" value="percentComplete">{{i}} Amps</progressbar>
 					</div>
@@ -79,6 +79,7 @@
 	    					<option value="86400">Days</option>
 	    				</select>
 	    				<button type="button" class="btn btn-info" ng-click="getLogData(logUnits*numLogPoints);logCollapse=false">Get Data</button>
+	    				<button type="button" class="btn btn-info" ng-disabled="logCollapse" ng-click="downloadData(logUnits*numLogPoints)">Download</button>
 	    			</div>
 	    		</form>
     		</div>

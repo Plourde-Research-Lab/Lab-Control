@@ -2,11 +2,11 @@
 
 var labControlApp = angular.module('labControlApp', [
     'ngRoute', 'nvd3', 'ui.bootstrap'
-    ]);
+]);
 
-labControlApp.config(['$routeProvider', '$locationProvider',
-    function($routeProvider, $locationProvider) {
-    $routeProvider.
+labControlApp.config(['$routeProvider', '$locationProvider', '$compileProvider',
+    function($routeProvider, $locationProvider, $compileProvider) {
+        $routeProvider.
         when('/', {
             templateUrl: 'partials/index.html',
             controller: 'mainCtrl'
@@ -36,5 +36,8 @@ labControlApp.config(['$routeProvider', '$locationProvider',
             redirectTo: '/'
         });
 
-    $locationProvider.html5Mode(true);
-}]);
+        $locationProvider.html5Mode(true);
+
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);
+    }
+]);

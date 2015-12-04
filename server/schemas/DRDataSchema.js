@@ -6,7 +6,8 @@ var DRDataSchema = {
     t5: Number,
     t6: Number,
     t7: Number,
-    t8: Number
+    t8: Number,
+    baseTemp: Number
 };
 
 module.exports = DRDataSchema;
