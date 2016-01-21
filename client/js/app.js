@@ -32,6 +32,10 @@ labControlApp.config(['$routeProvider', '$locationProvider', '$compileProvider',
             templateUrl: 'partials/adr.html',
             controller: 'ADR2Ctrl'
         }).
+        when('/liquefier', {
+            templateUrl: 'partials/liq.html',
+            controller: 'liqCtrl'
+        }).
         otherwise({
             redirectTo: '/'
         });

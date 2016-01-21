@@ -43,6 +43,7 @@ var ADR1 = require('./server/models/ADR1Model');
 var ADR2 = require('./server/models/ADR2Model');
 var DR1 = require('./server/models/DR1Model');
 var DR2 = require('./server/models/DR2Model');
+var Liq = require('./server/models/LiqModel');
 
 // HTTP requests
 ///////////////////////////////////////////////////////////////
@@ -174,7 +175,7 @@ app.get('/getData', function(req, res) {
         });
 });
 
-app.get('/downloadData', function (req, res) {
+app.get('/downloadData', function(req, res) {
     switch (req.query.fridge) {
         case 'DR1':
             var dataDB = DR1.data;
@@ -198,7 +199,10 @@ app.get('/downloadData', function (req, res) {
             else {
                 // res.json(data);
                 // res.flush();
-                json2csv({data: data, fields: ['timeStamp', 'sixtyKTemp', 'threeKTemp', 'baseTemp']}, function(err, csv) {
+                json2csv({
+                    data: data,
+                    fields: ['timeStamp', 'sixtyKTemp', 'threeKTemp', 'baseTemp']
+                }, function(err, csv) {
                     if (err) console.log(err);
                     fs.writeFile('file.csv', csv, function(err) {
                         if (err) throw err;
@@ -211,7 +215,7 @@ app.get('/downloadData', function (req, res) {
                     });
                 });
             }
-        });    
+        });
 });
 
 // Set Controls for ADRs
@@ -226,10 +230,10 @@ app.get('/control', function(req, res) {
     }
 
     dataDB.findOneAndUpdate({}, {
-        '$set': {
-            'command': req.query.command
-        }
-    })
+            '$set': {
+                'command': req.query.command
+            }
+        })
         .exec(function(err, data) {
             if (err || !data) console.log('Error.');
             else {
@@ -300,5 +304,45 @@ app.post('/history', function(req, res) {
                 } else console.log('Success');
             });
         }
+    });
+});
+
+// Liquifier Functionality
+
+app.get('/latestEntry', function(req, res) {
+    console.log("Got latestEntry req");
+    Liq.data.find().limit(1)
+        .sort({
+            timeStamp: -1
+    }).exec(function(err, data) {
+        if (err || !data) console.log('No data found.');
+        else {
+            res.json(data);
+            res.flush();
+        }
+    });
+});
+
+app.get('/latestFive', function(req, res) {
+    console.log("Got latestFive req");
+    Liq.data.find().limit(5).sort({
+        timeStamp: -1
+    }).exec(function(err, docs) {
+        console.log(docs);
+        res.json(docs);
+    });
+});
+
+app.get('/getLiqData', function(req, res) {
+    console.log("Got varEntries req with req = ", req.query.num);
+    Liq.data.find({
+        timeStamp: {
+            $gt: parseInt(req.query.num)
+        }
+    }).sort({
+        timeStamp: -1
+    }).exec(function(err, docs) {
+        console.log(docs);
+        res.json(docs);
     });
 });

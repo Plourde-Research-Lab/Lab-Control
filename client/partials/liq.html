@@ -1,0 +1,74 @@
+<div class="container-fluid">
+
+		<tabset justified="true">
+
+			<tab heading="Recent Activity">
+				<div class="row text-center">
+					<form class="form-inline">
+						<div class="form-group">
+							<label class="control-label">Get data</label>
+							<input class="form-control" ng-model="numLogPoints" placeholder="Integer"></input>
+							<select class="form-control" ng-model="logUnits">
+								<option value="3600">Hours</option>
+								<option value="86400">Days</option>
+							</select>
+							<button type="button" class="btn btn-danger" ng-click="getLiqData(numLogPoints*logUnits);logCollapse=false"></button>
+						</div>
+					</form>
+				</div>
+				<div class="row">
+					<nvd3 class = "Liq" options = "logChartOptions" data="recentData" config="chartConfig" data-ng-init="getLiqData(604800)"></nvd3>
+				</div>
+			</tab>
+
+			<tab heading="Data Log">
+				<div class="row text-center">
+					<form class="form-inline">
+						<div class="form-group">
+							<label class="control-label">Get data</label>
+							<input class="form-control" ng-model="numLogPoints" placeholder="Integer"></input>
+							<select class="form-control" ng-model="logUnits">
+								<option value="3600">Hours</option>
+								<option value="86400">Days</option>
+							</select>
+							<button type="button" class="btn btn-danger" ng-click="getLiqData(numLogPoints*logUnits);logCollapse=false"></button>
+						</div>
+					</form>
+				</div>
+				<div class="row">
+					<nvd3 class = "Liq" options = "logChartOptions" data="importantData" config="chartConfig"></nvd3>
+				</div>
+			</tab>
+
+			<tab heading="Notes">
+				<div class="row text-center">
+					<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#createnote">Create note</button>
+				</div>
+				<div class="collapse" id="createnote">
+					<form role="form">
+					    <div class="form-group">
+					    	<div class="col-xs-2"><strong><h4>Create note</h4></strong>
+					    	</div>
+					    	<div class="col-xs-3">
+					     	   	<input class="form-control" type="text" placeholder="Name">
+					      	</div>
+					      	<div class="col-xs-6">
+					        	<textarea class="form-control" type="text" rows="2" placeholder="Note"></textarea>
+					      	</div>
+					      	<div>
+					      		<button class="btn btn-info" ng-click="addNote()">Submit</button>
+					      	</div>
+					    </div>
+					</form>
+				</div>
+<!-- 				<div class="row">
+       				<div class="span4 collapse-group">
+         				<h2>Heading</h2>
+           				<p class="collapse" id="viewdetails">Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          				<p><a class="btn" data-toggle="collapse" data-target="#viewdetails">View details &raquo;</a></p>
+       				</div>
+      			</div> -->
+
+      		</tab>
+      	</tabset>
+  	</div>

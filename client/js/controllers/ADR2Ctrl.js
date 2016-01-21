@@ -189,7 +189,8 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
             currentState: 'Magup',
             switchState: 'Closed',
             magupPercentage: '60',
-            percentComplete: '0'
+            percentComplete: '0',
+            jobStart: ''
         };
 
         $scope.historyData = [{
@@ -388,8 +389,9 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
         $scope.getState = function() {
             fridgeService.state($scope.name)
                 .then(function(response) {
-                    $scope.fridgeData.currentState = response.data.fridgeStatus
-                    $scope.fridgeData.currentJob = response.data.currentJob
+                    $scope.fridgeData.currentState = response.data.fridgeStatus;
+                    $scope.fridgeData.currentJob = response.data.currentJob;
+                    $scope.fridgeData.jobStart = moment.unix(response.data.jobStart).add(5, 'hours');
                 })
         }
 

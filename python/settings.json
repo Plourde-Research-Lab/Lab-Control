@@ -1,0 +1,60 @@
+{
+  "logFileName": "ADR2Log.txt",
+  "mongoClient": "mongodb://localhost/",
+  "sensors": [
+    {
+      "name": "baseTemp",
+      "instr": "Lakeshore 332",
+      "command": "KRDG? B"
+    },
+    {
+      "name": "oneKTemp",
+      "instr": "Lakeshore 332",
+      "command": "KRDG? A"
+    },
+    {
+      "name": "threeKTemp",
+      "instr": "Lakeshore 340",
+      "command": "KRDG? A"
+    },
+    {
+      "name": "sixtyKTemp",
+      "instr": "Lakeshore 340",
+      "command": "KRDG? B"
+    },
+    {
+      "name": "psVoltage",
+      "instr": "Agilent 6641A",
+      "command": "MEAS:VOLT?"
+    },
+    {
+      "name": "psCurrent",
+      "instr": "Agilent 6641A",
+      "command": "MEAS:CURR?"
+    },
+    {
+      "name": "magnetVoltage",
+      "instr": "Lakeshore 340",
+      "command": "SRDG? D"
+    },
+    {
+      "name": "psVoltCommand",
+      "instr": "Agilent 6641A",
+      "command": "VOLT?"
+    }
+  ],
+  "instruments": [
+    {
+      "name": "Lakeshore 332",
+      "address": "GPIB0::2::INSTR"
+    },
+    {
+      "name": "Lakeshore 340",
+      "address": "GPIB0::1::INSTR"
+    },
+    {
+      "name": "Agilent 6641A",
+      "address": "GPIB0::6::INSTR"
+    }
+  ]
+}
