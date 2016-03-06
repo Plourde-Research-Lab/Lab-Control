@@ -1,7 +1,7 @@
 'use strict';
 
 var labControlApp = angular.module('labControlApp', [
-    'ngRoute', 'nvd3', 'ui.bootstrap'
+    'ngRoute', 'ui.bootstrap', 'plotly'
 ]);
 
 labControlApp.config(['$routeProvider', '$locationProvider', '$compileProvider',

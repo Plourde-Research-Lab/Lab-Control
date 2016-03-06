@@ -13,7 +13,7 @@ class labControl(QtGui.QMainWindow):
 
     def __init__(self):
         super(labControl, self).__init__()
-        uic.loadUi('C:\Users\Caleb\Development\lab-control\python\gui.ui', self)
+        uic.loadUi('gui.ui', self)
         self.setWindowTitle('ADR2Control')
 
         # Load Settings
@@ -30,7 +30,7 @@ class labControl(QtGui.QMainWindow):
 
         ## Instrument parameters
         ### Connect to instruments
-        self.connectInstruments()
+        # self.connectInstruments()
 
         ### Power supply parameters
 
@@ -66,7 +66,7 @@ class labControl(QtGui.QMainWindow):
         self.logFileSelectBtn.clicked.connect(lambda : self.selectLogFile())
 
         ## Start
-        self.startControl()
+        # self.startControl()
         self.show()
 
     def connectInstruments(self):

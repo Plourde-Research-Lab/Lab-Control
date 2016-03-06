@@ -6,42 +6,145 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
             monitorMinutes: 5
         };
 
-        $scope.chartconfig = {
-            visible: true,
-            autorefresh: true,
-            refreshDataOnly: true
-        };
-
-        $scope.chartoptions = {
-            chart: {
-                type: 'lineChart',
-                margin: {
-                    top: 10,
-                    right: 20,
-                    bottom: 10,
-                    left: 40
-                },
-                x: function(d) {
-                    return d.x;
-                },
-                y: function(d) {
-                    return d.y;
-                },
-                useInteractiveGuideline: false,
-                showLegend: true,
-                transitionDuration: 0,
-                yAxis: {
-                    tickFormat: function(d) {
-                        return d3.format('.5n')(d);
-                    }
-                },
-                xAxis: {
-                    tickFormat: function(d) {
-                        return d3.time.format.utc('%X')(new Date(d * 1000));
+        $scope.charts = [
+            {
+                data: [{
+                    x: [],
+                    y: [],
+                    temp: null,
+                    delta: null
+                }],
+                layout: {
+                    title: "60K Temp",
+                    xaxis: {
+                        type: 'date',
+                        showline: true
+                    },
+                    yaxis: {
+                        showline: true
+                    },
+                    margin: {
+                        l: 40,
+                        r: 40
                     }
                 }
-                // showXAxis: false
+            },
+            {
+                data: [{
+                    x: [],
+                    y: [],
+                    temp: null,
+                    delta: null
+                }],
+                layout: {
+                    title: "3K Temp",
+                    xaxis: {
+                        type: 'date',
+                        showline: true
+                    },
+                    yaxis: {
+                        showline: true
+                    },
+                    margin: {
+                        l: 40,
+                        r: 40
+                    }
+                }
+            },
+            {
+                data: [{
+                    x: [],
+                    y: [],
+                    temp: null,
+                    delta: null
+                }],
+                layout: {
+                    title: "1K Temp",
+                    xaxis: {
+                        type: 'date',
+                        showline: true
+                    },
+                    yaxis: {
+                        showline: true
+                    },
+                    margin: {
+                        l: 40,
+                        r: 40
+                    }
+                }
+            },
+            {
+                data: [{
+                    x: [],
+                    y: [],
+                    temp: null,
+                    delta: null
+                }],
+                layout: {
+                    title: "Base Temp",
+                    xaxis: {
+                        type: 'date',
+                        showline: true
+                    },
+                    yaxis: {
+                        showline: true
+                    },
+                    margin: {
+                        l: 40,
+                        r: 40
+                    }
+                }
             }
+        ]
+
+        $scope.magnetCharts = [
+            {
+                data: [{
+                    x: [],
+                    y: []
+                }],
+                layout: {
+                    title: "Inductive Voltage",
+                    xaxis: {
+                        type: 'date',
+                        showline: true
+                    },
+                    yaxis: {
+                        title: "Volts",
+                        showline: true
+                    },
+                    margin: {
+                        l: 40,
+                        r: 40
+                    },
+                    line: {width: 1}
+                }
+            },
+            {
+                data: [{
+                    x: [],
+                    y: []
+                }],
+                layout: {
+                    title: "Magnet Current",
+                    xaxis: {
+                        type: 'date',
+                        showline: true
+                    },
+                    yaxis: {
+                        title: "Amps",
+                        showline: true
+                    },
+                    margin: {
+                        l: 40,
+                        r: 40
+                    }
+                }
+            }
+        ]
+
+        $scope.options = {
+            displayModeBar: false
         };
 
         $scope.logChartOptions = {
@@ -132,44 +235,6 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
                 }
             }
         };
-
-        $scope.tempData = [
-            [{
-                key: '60K Temp',
-                values: [],
-                temp: null,
-                delta: null
-            }],
-            [{
-                key: '3K Temp',
-                values: [],
-                temp: null,
-                delta: null
-            }],
-            [{
-                key: '1K Temp',
-                values: [],
-                temp: null,
-                delta: null
-            }],
-            [{
-                key: 'Base Temp',
-                values: [],
-                temp: null,
-                delta: null
-            }]
-        ];
-
-        $scope.magnetData = [
-            [{
-                key: 'Magnet Voltage',
-                values: []
-            }],
-            [{
-                key: 'Current',
-                values: []
-            }]
-        ];
 
         $scope.logData = [{
             key: '60K Temperature',
@@ -263,38 +328,34 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
         $scope.updateChartData = function(datas) {
             datas.reverse().forEach(function(data, index, array) {
                 $scope.timeStamp = data.timeStamp;
-                $scope.tempData[0][0].temp = data.sixtyKTemp.toFixed(4);
-                $scope.tempData[1][0].temp = data.threeKTemp.toFixed(3);
-                $scope.tempData[2][0].temp = data.oneKTemp.toFixed(3);
-                $scope.tempData[3][0].temp = data.baseTemp; //.toFixed(4);
+                $scope.charts[0].data[0].temp = data.sixtyKTemp.toFixed(4);
+                $scope.charts[1].data[0].temp = data.threeKTemp.toFixed(3);
+                $scope.charts[2].data[0].temp = data.oneKTemp.toFixed(3);
+                $scope.charts[3].data[0].temp = data.baseTemp; //.toFixed(4);
                 $scope.v = data.magnetVoltage.toFixed(4);
                 $scope.i = data.psCurrent.toFixed(4);
                 $scope.percentComplete = data.percentComplete;
-                if ($scope.tempData[0][0].temp < 300) {
-                    $scope.tempData.forEach(function(element, index) {
-                        element[0].values.push({
-                            x: $scope.timeStamp,
-                            y: element[0].temp
-                        });
-                        element[0].delta = $scope.calculateTempDelta(element[0].values);
+                if ($scope.charts[0].data[0].temp < 300) {
+                    $scope.charts.forEach(function(element, index) {
+                        element.data[0].x.push(moment.unix($scope.timeStamp).toDate());
+                        element.data[0].y.push(element.data[0].temp)
+                        // element.delta = $scope.calculateTempDelta(element[0].values);
                     });
 
-                    $scope.magnetData[0][0].values.push({
-                        x: $scope.timeStamp,
-                        y: $scope.v
-                    });
-                    $scope.magnetData[1][0].values.push({
-                        x: $scope.timeStamp,
-                        y: $scope.i
-                    });
-                    // $scope.$apply();
-                    if ($scope.tempData[0][0].values.length > 120) {
-                        $scope.tempData[0][0].values.shift();
-                        $scope.tempData[1][0].values.shift();
-                        $scope.tempData[2][0].values.shift();
-                        $scope.tempData[3][0].values.shift();
-                        $scope.magnetData[0][0].values.shift();
-                        $scope.magnetData[1][0].values.shift();
+                    $scope.magnetCharts[0].data[0].x.push($scope.timeStamp);
+                    $scope.magnetCharts[0].data[0].y.push($scope.v);
+                    $scope.magnetCharts[1].data[0].x.push($scope.timeStamp);
+                    $scope.magnetCharts[1].data[0].y.push($scope.i);
+
+                    if ($scope.charts[0].data[0].x.length > 120) {
+                        $scope.charts.forEach(function(element, index){
+                            element.data[0].x.shift();
+                            element.data[0].y.shift();
+                        });
+                        $scope.magnetCharts.forEach(function(element, index){
+                            element.data[0].x.shift();
+                            element.data[0].y.shift();
+                        });
                     }
                 } else {
                     console.log($scope.fridgeData.currentState);
@@ -401,6 +462,7 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
             $scope.temp = [{}, {}, {}, {}];
             $scope.getChartData(120);
             $scope.getHistoryData();
+            // Plotly.plot("py", $scope.traces, $scope.layout);
         };
 
         $scope.init();

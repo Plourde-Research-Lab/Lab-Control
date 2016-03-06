@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 
     shell: {
       mongo: {
-        command: "mongod --dbpath=D:/data/db",
+        command: "mongod",
         options: {
             async: true,
             stdout: false,
