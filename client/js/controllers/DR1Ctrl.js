@@ -91,49 +91,49 @@ angular.module('labControlApp').controller('DR1Ctrl', [
 
         $scope.tempData = [
             [{
-                key: 'T1',
+                key: 'MC',
                 values: [],
                 temp: null,
                 delta: null
             }],
             [{
-                key: 'T3',
+                key: 'Still',
                 values: [],
                 temp: null,
                 delta: null
             }],
             [{
-                key: 'T4',
+                key: '1K',
                 values: [],
                 temp: null,
                 delta: null
             }],
             [{
-                key: 'T5',
+                key: 'LHe In',
                 values: [],
                 temp: null,
                 delta: null
             }],
             [{
-                key: 'T6',
+                key: 'LHe Out',
                 values: [],
                 temp: null,
                 delta: null
             }],
             [{
-                key: 'T7',
+                key: 'LN2',
                 values: [],
                 temp: null,
                 delta: null
             }],
             [{
-                key: 'T8',
+                key: 'Sinter',
                 values: [],
                 temp: null,
                 delta: null
             }],
             [{
-                key: 'baseTemp',
+                key: 'MC Resistance',
                 values: [],
                 temp: null,
                 delta: null
@@ -141,28 +141,28 @@ angular.module('labControlApp').controller('DR1Ctrl', [
         ];
 
         $scope.logData = [{
-            key: 'T1',
+            key: 'MC',
             values: []
         }, {
-            key: 'T3',
+            key: 'Still',
             values: []
         }, {
-            key: 'T4',
+            key: '1K',
             values: []
         }, {
-            key: 'T5',
+            key: 'LHe In',
             values: []
         }, {
-            key: 'T6',
+            key: 'LHe Out',
             values: []
         }, {
-            key: 'T7',
+            key: 'LN2',
             values: []
         }, {
-            key: 'T8',
+            key: 'Sinter',
             values: []
         }, {
-            key: 'baseTemp',
+            key: 'MC Resistance',
             values: []
         }];
 
@@ -229,7 +229,7 @@ angular.module('labControlApp').controller('DR1Ctrl', [
         $scope.calculateTempDelta = function(array) {
             //Return mK / second
             return ((array[array.length - 1]['y'] - array[0]['y']) /
-                (array[array.length - 1]['x'] - array[0]['x']) * 1000).toFixed(3);
+                (array[array.length - 1]['x'] - array[0]['x']) * 1000 * 60).toFixed(3);
         };
 
         var timeoutChart = $timeout(function() {
@@ -268,7 +268,7 @@ angular.module('labControlApp').controller('DR1Ctrl', [
                     });
 
                     // $scope.$apply();
-                    if ($scope.tempData[0][0].values.length > 60) {
+                    if ($scope.tempData[0][0].values.length > 120) {
                         $scope.tempData[0][0].values.shift();
                         $scope.tempData[1][0].values.shift();
                         $scope.tempData[2][0].values.shift();

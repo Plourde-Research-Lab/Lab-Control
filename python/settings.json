@@ -1,6 +1,7 @@
 {
+  "fridge": "ADR2",
   "logFileName": "ADR2Log.txt",
-  "mongoClient": "mongodb://localhost/",
+  "mongoClient": "mongodb://prl-redmine.syr.edu",
   "sensors": [
     {
       "name": "baseTemp",
@@ -46,15 +47,18 @@
   "instruments": [
     {
       "name": "Lakeshore 332",
-      "address": "GPIB0::2::INSTR"
+      "address": "GPIB0::2::INSTR",
+      "connected": true
     },
     {
       "name": "Lakeshore 340",
-      "address": "GPIB0::1::INSTR"
+      "address": "GPIB0::1::INSTR",
+      "connected": true
     },
     {
       "name": "Agilent 6641A",
-      "address": "GPIB0::6::INSTR"
+      "address": "GPIB0::6::INSTR",
+      "connected": true
     }
   ]
 }

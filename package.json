@@ -3,14 +3,14 @@
   "private": true,
   "name": "Lab-Control",
   "dependencies": {
-    "angular": "^1.3.5",
-    "body-parser": "^1.10.0",
-    "cookie-parser": "^1.3.3",
+    "angular": "^1.5.0",
+    "body-parser": "^1.15.0",
+    "cookie-parser": "^1.4.1",
     "csv": "^0.4.6",
-    "express": "^4.10.4",
-    "json2csv": "^3.0.1",
-    "mongoose": "^3.8.20",
-    "morgan": "^1.5.0"
+    "express": "^4.13.4",
+    "json2csv": "^3.2.0",
+    "mongoose": "^4.4.6",
+    "morgan": "^1.7.0"
   },
   "scripts": {
     "start": "nodemon ./server.js",
