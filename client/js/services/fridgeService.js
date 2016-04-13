@@ -1,6 +1,7 @@
 angular.module('labControlApp')
     .service('fridgeService', ['$http',
         function($http) {
+            // HTTP services
             this.getData = function(fridge, num) {
                 if (num == null) {
                     num = 1;

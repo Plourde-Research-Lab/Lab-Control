@@ -1,147 +1,57 @@
 angular.module('labControlApp').controller('ADR2Ctrl', [
-    '$scope', '$timeout', 'fridgeService', 'ADRService',
-    function($scope, $timeout, fridgeService, ADRService) {
+    '$scope', '$timeout', 'fridgeService', 'ADRService', 'plotService',
+    function($scope, $timeout, fridgeService, ADRService, plotService) {
         $scope.model = {
             message: 'This is the controller for dealing with ADR2.',
             monitorMinutes: 5
         };
 
-        $scope.charts = [
-            {
-                data: [{
-                    x: [],
-                    y: [],
-                    temp: null,
-                    delta: null
-                }],
-                layout: {
-                    title: "60K Temp",
-                    xaxis: {
-                        type: 'date',
-                        showline: true
-                    },
-                    yaxis: {
-                        showline: true
-                    },
-                    margin: {
-                        l: 40,
-                        r: 40
-                    }
-                }
-            },
-            {
-                data: [{
-                    x: [],
-                    y: [],
-                    temp: null,
-                    delta: null
-                }],
-                layout: {
-                    title: "3K Temp",
-                    xaxis: {
-                        type: 'date',
-                        showline: true
-                    },
-                    yaxis: {
-                        showline: true
-                    },
-                    margin: {
-                        l: 40,
-                        r: 40
-                    }
-                }
-            },
-            {
-                data: [{
-                    x: [],
-                    y: [],
-                    temp: null,
-                    delta: null
-                }],
-                layout: {
-                    title: "1K Temp",
-                    xaxis: {
-                        type: 'date',
-                        showline: true
-                    },
-                    yaxis: {
-                        showline: true
-                    },
-                    margin: {
-                        l: 40,
-                        r: 40
-                    }
-                }
-            },
-            {
-                data: [{
-                    x: [],
-                    y: [],
-                    temp: null,
-                    delta: null
-                }],
-                layout: {
-                    title: "Base Temp",
-                    xaxis: {
-                        type: 'date',
-                        showline: true
-                    },
-                    yaxis: {
-                        showline: true
-                    },
-                    margin: {
-                        l: 40,
-                        r: 40
-                    }
-                }
-            }
-        ]
+        $scope.charts = [{
+            data: [{
+                x: ["2016-04-05 11:20:02", "2016-04-05 11:25:02", "2016-04-05 11:30:02"],
+                y: [5, 6, 7],
+                temp: null,
+                delta: null
+            }],
+            layout: plotService.monitorLayout("60 K")
+        }, {
+            data: [{
+                x: ["2016-04-05 11:20:02", "2016-04-05 11:25:02", "2016-04-05 11:30:02"],
+                y: [5, 6, 7],
+                temp: null,
+                delta: null
+            }],
+            layout: plotService.monitorLayout("3 K")
+        }, {
+            data: [{
+                x: ["2016-04-05 11:20:02", "2016-04-05 11:25:02", "2016-04-05 11:30:02"],
+                y: [5, 6, 7],
+                temp: null,
+                delta: null
+            }],
+            layout: plotService.monitorLayout("GGG Pill")
+        }, {
+            data: [{
+                x: ["2016-04-05 11:20:02", "2016-04-05 11:25:02", "2016-04-05 11:30:02"],
+                y: [5, 6, 7],
+                temp: null,
+                delta: null
+            }],
+            layout: plotService.monitorLayout("FAA Pill")
+        }]
 
-        $scope.magnetCharts = [
-            {
-                data: [{
-                    x: [],
-                    y: []
-                }],
-                layout: {
-                    title: "Inductive Voltage",
-                    xaxis: {
-                        type: 'date',
-                        showline: true
-                    },
-                    yaxis: {
-                        title: "Volts",
-                        showline: true
-                    },
-                    margin: {
-                        l: 40,
-                        r: 40
-                    },
-                    line: {width: 1}
-                }
-            },
-            {
-                data: [{
-                    x: [],
-                    y: []
-                }],
-                layout: {
-                    title: "Magnet Current",
-                    xaxis: {
-                        type: 'date',
-                        showline: true
-                    },
-                    yaxis: {
-                        title: "Amps",
-                        showline: true
-                    },
-                    margin: {
-                        l: 40,
-                        r: 40
-                    }
-                }
-            }
-        ]
+        $scope.magnetChart = {
+            data: [{
+                x: ["2016-04-05 11:20:02", "2016-04-05 11:25:02", "2016-04-05 11:30:02"],
+                y: [.5, .6, .7],
+            }, {
+                x: ["2016-04-05 11:20:02", "2016-04-05 11:25:02", "2016-04-05 11:30:02"],
+                y: [7, 6, 5],
+                yaxis: 'y2'
+            }],
+            layout: plotService.magnetLayout()
+        };
+
 
         $scope.options = {
             displayModeBar: false
@@ -302,7 +212,7 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
                 });
         };
 
-        $scope.downloadData = function (variable) {
+        $scope.downloadData = function(variable) {
             var timeStep = 5;
             fridgeService.downloadData($scope.name, variable / timeStep);
         };
@@ -339,20 +249,20 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
                     $scope.charts.forEach(function(element, index) {
                         element.data[0].x.push(moment.unix($scope.timeStamp).toDate());
                         element.data[0].y.push(element.data[0].temp)
-                        // element.delta = $scope.calculateTempDelta(element[0].values);
+                            // element.delta = $scope.calculateTempDelta(element[0].values);
                     });
 
-                    $scope.magnetCharts[0].data[0].x.push($scope.timeStamp);
-                    $scope.magnetCharts[0].data[0].y.push($scope.v);
-                    $scope.magnetCharts[1].data[0].x.push($scope.timeStamp);
-                    $scope.magnetCharts[1].data[0].y.push($scope.i);
+                    $scope.magnetChart.data[0].x.push($scope.timeStamp);
+                    $scope.magnetChart.data[0].y.push($scope.v);
+                    $scope.magnetChart.data[1].x.push($scope.timeStamp);
+                    $scope.magnetChart.data[1].y.push($scope.i);
 
                     if ($scope.charts[0].data[0].x.length > 120) {
-                        $scope.charts.forEach(function(element, index){
+                        $scope.charts.forEach(function(element, index) {
                             element.data[0].x.shift();
                             element.data[0].y.shift();
                         });
-                        $scope.magnetCharts.forEach(function(element, index){
+                        $scope.magnetCharts.forEach(function(element, index) {
                             element.data[0].x.shift();
                             element.data[0].y.shift();
                         });

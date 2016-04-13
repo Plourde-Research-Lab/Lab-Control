@@ -4,10 +4,12 @@ body {
 	height: 100vh;
 	min-height: 100vh;
 	max-height: 100vh;
+	background-color: rgb(67, 67, 67);
 }
 
 h1, h2, h3 {
 	font-weight: 200;
+	color: white;
 }
 
 #jobContainer {
@@ -22,8 +24,8 @@ h1, h2, h3 {
 }
 
 .svg-container {
-	height: 40vh;
-	max-height: 40vh;
+	height: 22.5vh;
+	max-height: 22.5vh;
 }
 
 /*.container {
@@ -78,10 +80,10 @@ dl.tabs {
     text-align: center;
 }
 
-dl.tabs dd  {
+/*dl.tabs dd  {
     float: none !important;
     display: inline-block;
-}
+}*/
 
 iframe {
 	min-height: 50vh;
