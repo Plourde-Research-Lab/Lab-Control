@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
-var ADR2ADDR = 'mongodb://localhost';
-// var ADR2ADDR = 'mongodb://prl-redmine.syr.edu';
+// var ADR2ADDR = 'mongodb://localhost';
+var ADR2ADDR = 'mongodb://prl-redmine.syr.edu';
 
 var ADR2Connections = {
 	dataDB: mongoose.createConnection(ADR2ADDR + '/data'),

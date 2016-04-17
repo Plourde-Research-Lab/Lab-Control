@@ -2,18 +2,6 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
 
-    shell: {
-      mongo: {
-        command: "mongod",
-        options: {
-            async: true,
-            stdout: false,
-            stderr: true,
-            failOnError: true
-        }
-      }
-    },
-
     jshint: {
       all: ['client/js/**/*.js']
     },
@@ -52,6 +40,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-shell-spawn')
 
   // register the nodemon task when we run grunt
-  grunt.registerTask('default', ['shell:mongo', 'nodemon']);  
+  grunt.registerTask('default', ['nodemon']);  
 
 };

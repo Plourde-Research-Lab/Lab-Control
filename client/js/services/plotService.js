@@ -25,7 +25,7 @@ angular.module('labControlApp')
                         "type": "linear",
                         "ticklen": 5,
                         "showline": true,
-                        "tickfont": { "color": "rgb(255, 255, 255)", "family": "\"Open Sans\", verdana, arial, sans-serif", "size": 24 },
+                        "tickfont": { "color": "rgb(255, 255, 255)", "family": "-apple-system, \"Open Sans\", verdana, arial, sans-serif", "size": 16 },
                         "tickwidth": 1,
                         "tickangle": "auto",
                         "gridwidth": 0.1,
@@ -39,7 +39,7 @@ angular.module('labControlApp')
                     "separators": ".,",
                     // "height": 300,
                     // "width": 800,
-                    "titlefont": { "color": "rgb(255, 255, 255)", "family": "\"Open Sans\", verdana, arial, sans-serif", "size": 24 },
+                    "titlefont": { "color": "rgb(255, 255, 255)", "family": "-apple-system, \"Open Sans\", verdana, arial, sans-serif", "size": 24 },
                     "xaxis": {
                         "showexponent": "none",
                         "showticklabels": true,
@@ -59,7 +59,7 @@ angular.module('labControlApp')
                         "type": "date",
                         "ticklen": 5,
                         "showline": true,
-                        "tickfont": { "color": "rgb(255, 255, 255)", "family": "\"Open Sans\", verdana, arial, sans-serif", "size": 16 },
+                        "tickfont": { "color": "rgb(255, 255, 255)", "family": "\"Open Sans\", verdana, arial, sans-serif", "size": 12 },
                         "tickwidth": 1,
                         "tickangle": "auto",
                         "gridwidth": 0.1,
@@ -70,7 +70,7 @@ angular.module('labControlApp')
                     "hovermode": "x",
                     "font": {
                         "color": "rgb(255, 255, 255)",
-                        "family": "\"Open Sans\", verdana, arial, sans-serif",
+                        "family": "-apple-system, \"Open Sans\", verdana, arial, sans-serif",
                         "size": 12
                     },
                     "legend": { "font": { "size": 16 } },
@@ -79,8 +79,8 @@ angular.module('labControlApp')
                         t: 60,
                         autoexpand: true,
                         pad: 0,
-                        l: 50,
-                        r: 50,
+                        l: 60,
+                        r: 40,
                         b: 40
                     }
                 };
@@ -101,7 +101,7 @@ angular.module('labControlApp')
                         "autorange": true,
                         "linewidth": 1,
                         "tickmode": "auto",
-                        "title": "Voltage (V)",
+                        "title": "Voltage (mV)",
                         "ticks": "",
                         "showgrid": true,
                         "zeroline": false,
@@ -113,7 +113,6 @@ angular.module('labControlApp')
                         "tickwidth": 1,
                         "tickangle": "auto",
                         "gridwidth": 0.1,
-                        "range": [2.7809, 5.3529],
                         "tickcolor": "rgb(255, 255, 255)",
                         "exponentformat": "B"
                     },
@@ -140,7 +139,6 @@ angular.module('labControlApp')
                         "tickwidth": 1,
                         "tickangle": "auto",
                         "gridwidth": 0.1,
-                        "range": [2.7809, 5.3529],
                         "tickcolor": "rgb(255, 255, 255)",
                         "exponentformat": "B",
                         "overlaying": 'y',
