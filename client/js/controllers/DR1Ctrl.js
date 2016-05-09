@@ -1,7 +1,7 @@
 angular.module('labControlApp').controller('DR1Ctrl', [
-    '$scope', '$http', '$timeout', 'fridgeService',
+    '$scope', '$http', '$timeout', 'fridgeService', 'plotService',
 
-    function($scope, $http, $timeout, fridgeService) {
+    function($scope, $http, $timeout, fridgeService, plotService) {
         $scope.model = {
             message: 'This is the controller for dealing with DR1.'
         };
@@ -12,6 +12,109 @@ angular.module('labControlApp').controller('DR1Ctrl', [
             refreshDataOnly: true
         };
 
+        $scope.charts = [{
+            data: [{
+                x: [],
+                y: [],
+                temp: null,
+                delta: null,
+                line: {
+                    color: '#66D9EF',
+                    width: 2
+                }
+            }],
+            layout: plotService.monitorLayout("T1")
+        }, {
+            data: [{
+                x: [],
+                y: [],
+                temp: null,
+                delta: null,
+                line: {
+                    color: '#66D9EF',
+                    width: 2
+                }
+            }],
+            layout: plotService.monitorLayout("T3")
+        }, {
+            data: [{
+                x: [],
+                y: [],
+                temp: null,
+                delta: null,
+                line: {
+                    color: '#66D9EF',
+                    width: 2
+                }
+            }],
+            layout: plotService.monitorLayout("T4")
+        }, {
+            data: [{
+                x: [],
+                y: [],
+                temp: null,
+                delta: null,
+                line: {
+                    color: '#66D9EF',
+                    width: 2
+                }
+            }],
+            layout: plotService.monitorLayout("T5")
+        }, {
+            data: [{
+                x: [],
+                y: [],
+                temp: null,
+                delta: null,
+                line: {
+                    color: '#66D9EF',
+                    width: 2
+                }
+            }],
+            layout: plotService.monitorLayout("T6")
+        }, {
+            data: [{
+                x: [],
+                y: [],
+                temp: null,
+                delta: null,
+                line: {
+                    // get color() {
+                    //     console.log(this.delta)
+                    //     return this.delta > 0 ? '#66D9EF': '#F92672'
+                    // },
+                    width: 2
+                }
+            }],
+            layout: plotService.monitorLayout("T7")
+        }, {
+            data: [{
+                x: [],
+                y: [],
+                temp: null,
+                delta: null,
+                line: {
+                    color: '#66D9EF',
+                    width: 2
+                }
+            }],
+            layout: plotService.monitorLayout("T8")
+        }, {
+            data: [{
+                x: [],
+                y: [],
+                temp: null,
+                delta: null,
+                line: {
+                    color: '#66D9EF',
+                    width: 2
+                }
+            }],
+            layout: plotService.monitorLayout("Base")
+        }];
+        $scope.options = {
+            displayModeBar: false
+        }
         $scope.chartoptions = {
             chart: {
                 type: 'lineChart',
@@ -226,10 +329,12 @@ angular.module('labControlApp').controller('DR1Ctrl', [
                 });
         };
 
-        $scope.calculateTempDelta = function(array) {
+        $scope.calculateTempDelta = function(chart) {
             //Return mK / second
-            return ((array[array.length - 1]['y'] - array[0]['y']) /
-                (array[array.length - 1]['x'] - array[0]['x']) * 1000).toFixed(3);
+
+            chart.delta = ((chart.y[chart.y.length - 1] - chart.y[0]) /
+                (chart.x[chart.x.length - 1] - chart.x[0]) * 1000 * 60).toFixed(3);
+            chart.line.color = chart.delta > .01 ? '#F92672': '#66D9EF'
         };
 
         var timeoutChart = $timeout(function() {
@@ -247,36 +352,31 @@ angular.module('labControlApp').controller('DR1Ctrl', [
         $scope.updateChartData = function(datas) {
             datas.reverse().forEach(function(data, index, array) {
                 $scope.timeStamp = data.timeStamp;
-                $scope.tempData[0][0].temp = data.t1.toFixed(3);
-                $scope.tempData[1][0].temp = data.t3.toFixed(3);
-                $scope.tempData[2][0].temp = data.t4.toFixed(3);
-                $scope.tempData[3][0].temp = data.t5.toFixed(3);
-                $scope.tempData[4][0].temp = data.t6.toFixed(3); //.toFixed(4);
-                $scope.tempData[5][0].temp = data.t7.toFixed(3);
-                $scope.tempData[6][0].temp = data.t8.toFixed(3);
-                $scope.tempData[7][0].temp = data.baseTemp.toFixed(3);
+                $scope.charts[0].data[0].temp = data.t1.toFixed(3);
+                $scope.charts[1].data[0].temp = data.t3.toFixed(3);
+                $scope.charts[2].data[0].temp = data.t4.toFixed(3);
+                $scope.charts[3].data[0].temp = data.t5.toFixed(3);
+                $scope.charts[4].data[0].temp = data.t6.toFixed(3); //.toFixed(4);
+                $scope.charts[5].data[0].temp = data.t7.toFixed(3);
+                $scope.charts[6].data[0].temp = data.t8.toFixed(3);
+                $scope.charts[7].data[0].temp = data.baseTemp.toFixed(3);
+                $scope.time = moment.unix($scope.timeStamp).local().toDate()
 
-                if ($scope.tempData[6][0].temp < 289.9) {
+                if ($scope.charts[6].data[0].temp < 289.9) {
                     $scope.fridgeData.currentState = 'Cold';
-                    $scope.tempData.forEach(function(element, index) {
-                        element[0].values
-                            .push({
-                                x: $scope.timeStamp,
-                                y: element[0].temp
-                            });
-                        element[0].delta = $scope.calculateTempDelta(element[0].values);
+                    $scope.charts.forEach(function(element, index) {
+                        element
+                        element.data[0].x.push($scope.time);
+                        element.data[0].y.push(element.data[0].temp)
+                        $scope.calculateTempDelta(element.data[0]);
                     });
 
                     // $scope.$apply();
-                    if ($scope.tempData[0][0].values.length > 60) {
-                        $scope.tempData[0][0].values.shift();
-                        $scope.tempData[1][0].values.shift();
-                        $scope.tempData[2][0].values.shift();
-                        $scope.tempData[3][0].values.shift();
-                        $scope.tempData[4][0].values.shift();
-                        $scope.tempData[5][0].values.shift();
-                        $scope.tempData[6][0].values.shift();
-                        $scope.tempData[7][0].values.shift();
+                    if ($scope.charts[0].data[0].x.length > 120) {
+                        $scope.charts.forEach(function(element, index) {
+                            element.data[0].x.shift();
+                            element.data[0].y.shift();
+                        });
                     }
                 } else {
                     $scope.fridgeData.currentState = 'Warm';

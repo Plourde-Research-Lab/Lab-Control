@@ -3,7 +3,7 @@ angular.module('labControlApp')
         function() {
             this.monitorLayout = function(title) {
                 return {
-                    "hidesources": false,
+                    "hidesources": true,
                     "autosize": true,
                     "dragmode": "zoom",
                     "yaxis": {
@@ -84,6 +84,11 @@ angular.module('labControlApp')
                         b: 40
                     }
                 };
+            }
+            this.monitorTrace = function() {
+                return {
+
+                }
             }
             this.magnetLayout = function() {
                 return {
