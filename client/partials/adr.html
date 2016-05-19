@@ -2,10 +2,17 @@
     <div class="row">
         <div class="col-lg-6 text-center">
             <div class="row" ng-repeat="chart in charts">
-                <div class="col-lg-12 text-center">
-                    <plotly data="chart.data" layout="chart.layout" options=options></plotly>
+                <div class="col-lg-3">
+                    <p class="ADRMonitor">
+                        {{chart.temp}} K
+                        <br>
+                        <span ng-style="{color: chart.line.color}">{{chart.delta}}</span>
+                        <span style="font-size: medium">K/min</span>
+                    </p>
                 </div>
-                <!-- <p class="ADRmonitor">{{data[0].temp + "K : " + data[0].delta + "mK/s"}}</p> -->
+                <div class="col-lg-9 text-center">
+                    <plotly data="[chart]" layout="chart.layout" options=options></plotly>
+                </div>
             </div>
         </div>
         <div class="col-lg-6 text-center">

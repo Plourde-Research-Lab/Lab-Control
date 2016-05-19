@@ -17,7 +17,9 @@
     "bootstrap": "~3.3.2",
     "moment": "~2.10.6",
     "angular-plotly": "~0.1.2",
-    "moment-timezone": "^0.5.3"
+    "moment-timezone": "^0.5.3",
+    "diff.js": "balint42/diff.js",
+    "mathjs": "^3.2.1"
   },
   "resolutions": {
     "jquery": ">= 1.9.1",

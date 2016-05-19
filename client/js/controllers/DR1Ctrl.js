@@ -6,145 +6,10 @@ angular.module('labControlApp').controller('DR1Ctrl', [
             message: 'This is the controller for dealing with DR1.'
         };
 
-        $scope.chartconfig = {
-            visible: true,
-            autorefresh: true,
-            refreshDataOnly: true
-        };
+        $scope.fridgeData = {};
 
-        $scope.charts = [{
-            data: [{
-                x: [],
-                y: [],
-                temp: null,
-                delta: null,
-                line: {
-                    color: '#66D9EF',
-                    width: 2
-                }
-            }],
-            layout: plotService.monitorLayout("T1")
-        }, {
-            data: [{
-                x: [],
-                y: [],
-                temp: null,
-                delta: null,
-                line: {
-                    color: '#66D9EF',
-                    width: 2
-                }
-            }],
-            layout: plotService.monitorLayout("T3")
-        }, {
-            data: [{
-                x: [],
-                y: [],
-                temp: null,
-                delta: null,
-                line: {
-                    color: '#66D9EF',
-                    width: 2
-                }
-            }],
-            layout: plotService.monitorLayout("T4")
-        }, {
-            data: [{
-                x: [],
-                y: [],
-                temp: null,
-                delta: null,
-                line: {
-                    color: '#66D9EF',
-                    width: 2
-                }
-            }],
-            layout: plotService.monitorLayout("T5")
-        }, {
-            data: [{
-                x: [],
-                y: [],
-                temp: null,
-                delta: null,
-                line: {
-                    color: '#66D9EF',
-                    width: 2
-                }
-            }],
-            layout: plotService.monitorLayout("T6")
-        }, {
-            data: [{
-                x: [],
-                y: [],
-                temp: null,
-                delta: null,
-                line: {
-                    // get color() {
-                    //     console.log(this.delta)
-                    //     return this.delta > 0 ? '#66D9EF': '#F92672'
-                    // },
-                    width: 2
-                }
-            }],
-            layout: plotService.monitorLayout("T7")
-        }, {
-            data: [{
-                x: [],
-                y: [],
-                temp: null,
-                delta: null,
-                line: {
-                    color: '#66D9EF',
-                    width: 2
-                }
-            }],
-            layout: plotService.monitorLayout("T8")
-        }, {
-            data: [{
-                x: [],
-                y: [],
-                temp: null,
-                delta: null,
-                line: {
-                    color: '#66D9EF',
-                    width: 2
-                }
-            }],
-            layout: plotService.monitorLayout("Base")
-        }];
         $scope.options = {
             displayModeBar: false
-        }
-        $scope.chartoptions = {
-            chart: {
-                type: 'lineChart',
-                margin: {
-                    top: 10,
-                    right: 20,
-                    bottom: 10,
-                    left: 40
-                },
-                x: function(d) {
-                    return d.x;
-                },
-                y: function(d) {
-                    return d.y;
-                },
-                useInteractiveGuideline: false,
-                showLegend: true,
-                transitionDuration: 0,
-                yAxis: {
-                    tickFormat: function(d) {
-                        return d3.format('.4n')(d);
-                    }
-                },
-                xAxis: {
-                    tickFormat: function(d) {
-                        return d3.time.format.utc('%X')(new Date(d * 1000));
-                    }
-                }
-                // showXAxis: false
-            }
         };
 
         $scope.logChartOptions = {
@@ -192,155 +57,40 @@ angular.module('labControlApp').controller('DR1Ctrl', [
             }
         };
 
-        $scope.tempData = [
-            [{
-                key: 'T1',
-                values: [],
-                temp: null,
-                delta: null
-            }],
-            [{
-                key: 'T3',
-                values: [],
-                temp: null,
-                delta: null
-            }],
-            [{
-                key: 'T4',
-                values: [],
-                temp: null,
-                delta: null
-            }],
-            [{
-                key: 'T5',
-                values: [],
-                temp: null,
-                delta: null
-            }],
-            [{
-                key: 'T6',
-                values: [],
-                temp: null,
-                delta: null
-            }],
-            [{
-                key: 'T7',
-                values: [],
-                temp: null,
-                delta: null
-            }],
-            [{
-                key: 'T8',
-                values: [],
-                temp: null,
-                delta: null
-            }],
-            [{
-                key: 'baseTemp',
-                values: [],
-                temp: null,
-                delta: null
-            }]
-        ];
-
-        $scope.logData = [{
-            key: 'T1',
-            values: []
-        }, {
-            key: 'T3',
-            values: []
-        }, {
-            key: 'T4',
-            values: []
-        }, {
-            key: 'T5',
-            values: []
-        }, {
-            key: 'T6',
-            values: []
-        }, {
-            key: 'T7',
-            values: []
-        }, {
-            key: 'T8',
-            values: []
-        }, {
-            key: 'baseTemp',
-            values: []
-        }];
-
-        $scope.fridgeData = {
-            currentState: 'Magup'
-        };
-
         $scope.getLogData = function(variable) {
             var timeStep = 5; //Number of seconds between data collection
+            $scope.log = plotService.logPlot($scope.charts);
 
-            $http.get('/getData', {
-                    params: {
-                        num: variable / timeStep,
-                        fridge: 'DR1'
-                    }
-                })
-                .success(function(data, status, headers, config) {
-                    // Fix this
-                    $scope.logData[0].values = [];
-                    $scope.logData[1].values = [];
-                    $scope.logData[2].values = [];
-                    $scope.logData[3].values = [];
-                    $scope.logData[4].values = [];
-                    $scope.logData[5].values = [];
-                    $scope.logData[6].values = [];
-                    $scope.logData[7].values = [];
-                    data.forEach(function(datapoint, index) {
-                        $scope.logData[0].values.push({
-                            x: datapoint.timeStamp,
-                            y: datapoint.t1
-                        });
-                        $scope.logData[1].values.push({
-                            x: datapoint.timeStamp,
-                            y: datapoint.t3
-                        });
-                        $scope.logData[2].values.push({
-                            x: datapoint.timeStamp,
-                            y: datapoint.t4
-                        });
-                        $scope.logData[3].values.push({
-                            x: datapoint.timeStamp,
-                            y: datapoint.t5
-                        });
-                        $scope.logData[4].values.push({
-                            x: datapoint.timeStamp,
-                            y: datapoint.t6
-                        });
-                        $scope.logData[5].values.push({
-                            x: datapoint.timeStamp,
-                            y: datapoint.t7
-                        });
-                        $scope.logData[6].values.push({
-                            x: datapoint.timeStamp,
-                            y: datapoint.t8
-                        });
-                        $scope.logData[7].values.push({
-                            x: datapoint.timeStamp,
-                            y: datapoint.baseTemp
-                        });
-                    });
+            fridgeService.getData($scope.name, variable / timeStep)
+                .then(function(response) {
+                    response.data.forEach(function(datapoint, index) {
+                        $scope.chartMap.forEach(function(element, index2) {
+                            $scope.log.data[index2].x.push(moment.unix(datapoint.timeStamp).toDate())
+                            $scope.log.data[index2].y.push(datapoint[element])
+                        })
+                    })
                 });
-        };
+        }
 
+        /**
+         * Calculates temperature slope from first and last data points
+         * @param {Object} chart
+         */
         $scope.calculateTempDelta = function(chart) {
-            //Return mK / second
-
-            chart.delta = ((chart.y[chart.y.length - 1] - chart.y[0]) /
-                (chart.x[chart.x.length - 1] - chart.x[0]) * 1000 * 60).toFixed(3);
-            chart.line.color = chart.delta > .01 ? '#F92672': '#66D9EF'
+            // Return K / Minute
+            // chart.delta = ((chart.y[chart.y.length - 1] - chart.y[0]) /
+            //     (chart.x[chart.x.length - 1] - chart.x[0]) * 1000 * 60).toFixed(3);
+            if (chart.y.length > 1) {
+                chart.delta = (math.mean(diff(chart.y)) / 5 * 60).toFixed(3)
+            }
+            // Update color to reflect warming or cooling
+            chart.line.color = chart.delta > .01 ? '#F92672' : '#66D9EF'
         };
 
-        var timeoutChart = $timeout(function() {
-            $scope.getChartData
-        }, 5050);
-
+        /**
+         * Service request to retrieve 'num' data points
+         * @param {Number} num
+         */
         $scope.getChartData = function(num) {
             fridgeService.getData($scope.name, num)
                 .then(function(response) {
@@ -349,33 +99,27 @@ angular.module('labControlApp').controller('DR1Ctrl', [
             $scope.chartTimeout = $timeout($scope.getChartData, 5050);
         };
 
+        /**
+         * Updates Chart Objects with data point(s)
+         * @param {Array} datas
+         */
         $scope.updateChartData = function(datas) {
             datas.reverse().forEach(function(data, index, array) {
                 $scope.timeStamp = data.timeStamp;
-                $scope.charts[0].data[0].temp = data.t1.toFixed(3);
-                $scope.charts[1].data[0].temp = data.t3.toFixed(3);
-                $scope.charts[2].data[0].temp = data.t4.toFixed(3);
-                $scope.charts[3].data[0].temp = data.t5.toFixed(3);
-                $scope.charts[4].data[0].temp = data.t6.toFixed(3); //.toFixed(4);
-                $scope.charts[5].data[0].temp = data.t7.toFixed(3);
-                $scope.charts[6].data[0].temp = data.t8.toFixed(3);
-                $scope.charts[7].data[0].temp = data.baseTemp.toFixed(3);
-                $scope.time = moment.unix($scope.timeStamp).local().toDate()
-
-                if ($scope.charts[6].data[0].temp < 289.9) {
-                    $scope.fridgeData.currentState = 'Cold';
+                $scope.chartMap.forEach(function(element, index) {
+                    $scope.charts[index].temp = data[element].toFixed(3)
+                });
+                $scope.time = moment.unix($scope.timeStamp).toDate()
+                if ($scope.charts[1].temp < 289.9) {
                     $scope.charts.forEach(function(element, index) {
-                        element
-                        element.data[0].x.push($scope.time);
-                        element.data[0].y.push(element.data[0].temp)
-                        $scope.calculateTempDelta(element.data[0]);
+                        element.x.push($scope.time);
+                        element.y.push(element.temp)
+                        $scope.calculateTempDelta(element);
                     });
-
-                    // $scope.$apply();
-                    if ($scope.charts[0].data[0].x.length > 120) {
+                    if ($scope.charts[0].x.length > 120) {
                         $scope.charts.forEach(function(element, index) {
-                            element.data[0].x.shift();
-                            element.data[0].y.shift();
+                            element.x.shift();
+                            element.y.shift();
                         });
                     }
                 } else {
@@ -393,12 +137,39 @@ angular.module('labControlApp').controller('DR1Ctrl', [
                 })
         };
 
+        /**
+         * Initializes $scope
+         */
         $scope.init = function() {
             $scope.name = 'DR1'
             $scope.getState()
-            $scope.temp = [{}, {}, {}, {}, {}, {}, {}, {}];
+            switch ($scope.fridgeData.currentState) {
+                default:
+                    $scope.chartList = ['Helium Vessel In', 'Helium Vessel Out', 'Nitrogen Vessel', 'Sinter',
+                        'Mixing Chamber RuOx'
+                    ];
+                    // $scope.chartMap = ['HeIn', 'HeOut', 'LN2Out', 'Sinter', 'MXCR']
+                    $scope.chartMap = ['t5', 't6', 't7', 't8', 'baseTemp']
+                    break;
+                case "Cooling Down":
+                    $scope.chartList = ['Mixing Chamber Diode', 'Still', '1K Pot',
+                        'Helium Vessel In', 'Helium Vessel Out', 'Nitrogen Vessel', 'Sinter',
+                        'Mixing Chamber RuOx'
+                    ];
+                    // $scope.chartMap = ['MXCD', 'still', '1KPot', 'HeIn', 'HeOut', 'LN2Out', 'sinter', 'MXCR'];
+                    $scope.chartMap = ['t1', 't3', 't4', 't5', 't6', 't7', 't8', 'baseTemp']
+                    break;
+
+            }
+            // Initialize chart objects
+            $scope.charts = [];
+            $scope.chartList.forEach(function(item, index) {
+                $scope.charts.push(plotService.monitorTrace(item));
+            });
+            $scope.log = plotService.logPlot($scope.charts);
+
+            // Load initial 10 minutes of data
             $scope.getChartData(120);
-            // $scope.getHistoryData();
         };
 
         $scope.init();
