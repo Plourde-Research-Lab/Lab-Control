@@ -139,6 +139,7 @@ class labControl(QtGui.QMainWindow):
         # Get information from Database
 
         self.info = self.controlDB.find().next()
+        self.lastCommand = self.info['command']
 
         if self.info['command'] == 'Magup':
             #Ensure fridge is actually cold enough to mag up!
@@ -162,6 +163,7 @@ class labControl(QtGui.QMainWindow):
                     logString = "Soaked for {} days, {}h: {}m: {}s".format(t.days,t.seconds//3600,(t.seconds//60)%60, t.seconds%60)
                     self.writeLog(logString)
                     # Open Heat Switch
+                    print("Opening HS to Magdown")
                     self.heatSwitchControl('Open')
 
                 self.info = self.controlDB.find_one_and_update({},{'$set': {'currentJob': 'Magdown', 'jobStart': self.data['timeStamp']}})
@@ -191,7 +193,7 @@ class labControl(QtGui.QMainWindow):
             else:
                 self.statusString = "Uncertain State"
 
-        self.lastCommand = self.info['command']
+
         # Control Magnet
         self.job = self.info['currentJob']
         self.currentJob.setText(self.job)
