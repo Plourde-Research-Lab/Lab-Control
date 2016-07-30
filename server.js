@@ -32,10 +32,6 @@ app.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
 });
 
-app.get('*', function (req, res){
-    res.sendFile(path.join(__dirname+'/client/index.html'));
-});
-
 ///////////////////////////////////////////////////////////////
 ///////////////////////// API /////////////////////////////////
 ///////////////////////////////////////////////////////////////
@@ -349,4 +345,8 @@ app.get('/getLiqData', function(req, res) {
         console.log(docs);
         res.json(docs);
     });
+});
+
+app.get('*', function (req, res){
+    res.sendFile(path.join(__dirname+'/client/index.html'));
 });
