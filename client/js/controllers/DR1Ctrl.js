@@ -63,6 +63,7 @@ angular.module('labControlApp').controller('DR1Ctrl', [
 
             fridgeService.getData($scope.name, variable / timeStep)
                 .then(function(response) {
+                    console.log(response.data)
                     response.data.forEach(function(datapoint, index) {
                         $scope.chartMap.forEach(function(element, index2) {
                             $scope.log.data[index2].x.push(moment.unix(datapoint.timeStamp).toDate())
@@ -107,7 +108,10 @@ angular.module('labControlApp').controller('DR1Ctrl', [
             datas.reverse().forEach(function(data, index, array) {
                 $scope.timeStamp = data.timeStamp;
                 $scope.chartMap.forEach(function(element, index) {
-                    $scope.charts[index].temp = data[element].toFixed(3)
+                    // Make sure property exists
+                    if (typeof(data[element] !== 'undefined')) {
+                        $scope.charts[index].temp = data[element].toFixed(3)
+                    }
                 });
                 $scope.time = moment.unix($scope.timeStamp).toDate()
                 if ($scope.charts[1].temp < 289.9) {
@@ -124,7 +128,6 @@ angular.module('labControlApp').controller('DR1Ctrl', [
                     }
                 } else {
                     $scope.fridgeData.currentState = 'Warm';
-                    console.log($scope.fridgeData.currentState);
                 }
             });
         };
@@ -144,23 +147,23 @@ angular.module('labControlApp').controller('DR1Ctrl', [
             $scope.name = 'DR1'
             $scope.getState()
             switch ($scope.fridgeData.currentState) {
-                default:
+                case "Cold":
                     $scope.chartList = ['Helium Vessel In', 'Helium Vessel Out', 'Nitrogen Vessel', 'Sinter',
-                        'Mixing Chamber RuOx'
+                        'Mixing Chamber RuOx', '1K Pot Pressure', 'Still Pressure'
                     ];
-                    // $scope.chartMap = ['HeIn', 'HeOut', 'LN2Out', 'Sinter', 'MXCR']
-                    $scope.chartMap = ['t5', 't6', 't7', 't8', 'baseTemp']
+                    $scope.chartMap = ['HeIn', 'HeOut', 'LN2Out', 'sinter', 'MXCR', '1KPotPressure', 'stillPressure']
+                    // $scope.chartMap = ['t5', 't6', 't7', 't8', 'baseTemp']
                     break;
-                case "Cooling Down":
+                default:
                     $scope.chartList = ['Mixing Chamber Diode', 'Still', '1K Pot',
                         'Helium Vessel In', 'Helium Vessel Out', 'Nitrogen Vessel', 'Sinter',
                         'Mixing Chamber RuOx'
                     ];
-                    // $scope.chartMap = ['MXCD', 'still', '1KPot', 'HeIn', 'HeOut', 'LN2Out', 'sinter', 'MXCR'];
-                    $scope.chartMap = ['t1', 't3', 't4', 't5', 't6', 't7', 't8', 'baseTemp']
+                    $scope.chartMap = ['MXCD', 'still', '1KPot', 'HeIn', 'HeOut', 'LN2Out', 'sinter', 'MXCR'];
+                    // $scope.chartMap = ['MXCD', 't3', 't4', 't5', 't6', 't7', 't8', 'baseTemp']
                     break;
-
             }
+
             // Initialize chart objects
             $scope.charts = [];
             $scope.chartList.forEach(function(item, index) {

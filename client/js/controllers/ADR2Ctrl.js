@@ -24,7 +24,7 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
 
         $scope.fridgeData = {
             currentState: 'Magup',
-            switchState: 'Closed',
+            switchState: '?',
             magupPercentage: '60',
             percentComplete: '0',
             jobStart: ''
@@ -37,9 +37,9 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
             chart.line.color = chart.delta > .01 ? '#F92672' : '#66D9EF'
         };
 
-        var timeoutChart = $timeout(function() {
-            $scope.getChartData
-        }, 5050);
+        // var timeoutChart = $timeout(function() {
+        //     $scope.getChartData
+        // }, 5050);
 
         $scope.getChartData = function(num) {
             fridgeService.getData($scope.name, num)
@@ -72,6 +72,7 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
                 $scope.v = data.magnetVoltage.toFixed(4);
                 $scope.i = data.psCurrent.toFixed(4);
                 $scope.percentComplete = data.percentComplete;
+                $scope.fridgeData.switchState = data.switchState
                 // console.log($scope.timeStamp)
                 // console.log(moment.utc($scope.timeStamp))
                 // console.log(moment.utc(moment.unix($scope.timeStamp)))
@@ -91,16 +92,16 @@ angular.module('labControlApp').controller('ADR2Ctrl', [
                     $scope.magnetChart.data[1].x.push($scope.time);
                     $scope.magnetChart.data[1].y.push($scope.i);
                     // console.log($scope.time)
-                    // if ($scope.charts[0].x.length > 120) {
-                    //     $scope.charts.forEach(function(element, index) {
-                    //         element.x.shift();
-                    //         element.y.shift();
-                    //     });
-                    //     $scope.magnetChart.data.forEach(function(element, index) {
-                    //         element.x.shift();
-                    //         element.y.shift();
-                    //     });
-                    // }
+                    if ($scope.charts[0].x.length > 120) {
+                        $scope.charts.forEach(function(element, index) {
+                            element.x.shift();
+                            element.y.shift();
+                        });
+                        $scope.magnetChart.data.forEach(function(element, index) {
+                            element.x.shift();
+                            element.y.shift();
+                        });
+                    }
                 } else {
                     console.log($scope.fridgeData.currentState);
                 }

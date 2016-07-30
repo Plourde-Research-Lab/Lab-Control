@@ -58,10 +58,10 @@ app.get('/status', function(req, res) {
             var dataDB = ADR2.control;
             break;
         case 'DR1':
-            var dataDB = DR1.data;
+            var dataDB = DR1.control;
             break;
         case 'DR2':
-            var dataDB = DR2.data;
+            var dataDB = DR2.control;
             break;
     }
     dataDB.findOne({}).exec(function(err, data) {
@@ -169,8 +169,29 @@ app.get('/getData', function(req, res) {
         }).exec(function(err, data) {
             if (err || !data) console.log('No data found.');
             else {
-                res.json(data);
-                res.flush();
+                var mod
+                if (req.query.num >= 1000) {
+                    if (req.query.num >=100000) {
+                        mod = 1000
+                    }
+                    else if (req.query.num >= 10000) {
+                        mod = 100
+                    }
+                    else {
+                        mod = 10
+                    }
+                    var result = []
+                    for (i = 0; i < data.length; i ++) {
+                        if (i%mod == 0) {
+                            result.push(data[i])
+                        }
+                    }
+                    res.json(result);
+                    res.flush()
+                } else {
+                    res.json(data);
+                    res.flush();
+                }
             }
         });
 });
@@ -314,13 +335,13 @@ app.get('/latestEntry', function(req, res) {
     Liq.data.find().limit(1)
         .sort({
             timeStamp: -1
-    }).exec(function(err, data) {
-        if (err || !data) console.log('No data found.');
-        else {
-            res.json(data);
-            res.flush();
-        }
-    });
+        }).exec(function(err, data) {
+            if (err || !data) console.log('No data found.');
+            else {
+                res.json(data);
+                res.flush();
+            }
+        });
 });
 
 app.get('/latestFive', function(req, res) {
@@ -345,4 +366,9 @@ app.get('/getLiqData', function(req, res) {
         console.log(docs);
         res.json(docs);
     });
+});
+
+
+app.get('*', function (req, res){
+    res.sendFile(path.join(__dirname+'/client/index.html'));
 });
