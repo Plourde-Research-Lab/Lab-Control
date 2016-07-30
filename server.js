@@ -32,6 +32,11 @@ app.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
 });
 
+// set up our one route to the index.html file
+app.get('*', function (req, res){
+    res.sendFile(path.join(__dirname+'/client/index.html'));
+});
+
 ///////////////////////////////////////////////////////////////
 ///////////////////////// API /////////////////////////////////
 ///////////////////////////////////////////////////////////////
