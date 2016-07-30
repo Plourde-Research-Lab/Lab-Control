@@ -8,6 +8,7 @@ from datetime import datetime
 from calendar import timegm
 from pymongo import MongoClient, ASCENDING, DESCENDING, ReturnDocument
 import pyvisa
+from serial import Serial
 import json
 
 class labControl(QtGui.QMainWindow):
@@ -16,6 +17,8 @@ class labControl(QtGui.QMainWindow):
         super(labControl, self).__init__()
         uic.loadUi('gui.ui', self)
         self.setWindowTitle('ADRControl')
+
+        self.debugLog = True
 
         # Load Settings
         self.settings = json.load(open('settings.json'))
@@ -31,6 +34,7 @@ class labControl(QtGui.QMainWindow):
 
         ## Instrument parameters
         ### Connect to instruments
+        self.heatSwitch = Serial(self.settings['heatSwitch']['address'], 9600, timeout=1)
         self.connectInstruments()
 
         ### Power supply parameters
@@ -43,6 +47,7 @@ class labControl(QtGui.QMainWindow):
             self.dataDB = getattr(self.mongoClient.data, self.settings['fridge'].lower() + "datas")
             self.controlDB = getattr(self.mongoClient.control, self.settings['fridge'].lower() + "controls")
             self.jobDB = getattr(self.mongoClient.jobs, self.settings['fridge'].lower() + "jobs")
+            if self.debugLog: print("Connected to databases.")
         except Exception:
             self.writeLog("Databse Error.")
 
@@ -134,6 +139,7 @@ class labControl(QtGui.QMainWindow):
         # Get information from Database
 
         self.info = self.controlDB.find().next()
+        self.lastCommand = self.info['command']
 
         if self.info['command'] == 'Magup':
             #Ensure fridge is actually cold enough to mag up!
@@ -144,15 +150,21 @@ class labControl(QtGui.QMainWindow):
                 logString = "Start Magup to " + str(self.info['maxVoltage']) + "mV at " + datetime.now().strftime('%a, %c')
                 self.writeLog(logString)
 
+        elif self.info['command'] in ['Open', 'Close']:
+            self.heatSwitchControl(self.info['command'])
+
         elif self.info['command'] == 'Magdown':
             if self.info['currentJob'] != 'Magdown':
                 if self.info['currentJob'] == 'Soak':
                     self.stopSoakTime = datetime.now()
                     self.startSoakTime = datetime.fromtimestamp(self.info['jobStart'])
-                    print(self.startSoakTime)
-                    # t = (self.stopSoakTime - self.startSoakTime)
-                    # logString = "Soaked for {} days, {}h: {}m: {}s".format(t.days,t.seconds//3600,(t.seconds//60)%60, t.seconds%60)
-                    # self.writeLog(logString)
+                    # print(self.startSoakTime)
+                    t = (self.stopSoakTime - self.startSoakTime)
+                    logString = "Soaked for {} days, {}h: {}m: {}s".format(t.days,t.seconds//3600,(t.seconds//60)%60, t.seconds%60)
+                    self.writeLog(logString)
+                    # Open Heat Switch
+                    print("Opening HS to Magdown")
+                    self.heatSwitchControl('Open')
 
                 self.info = self.controlDB.find_one_and_update({},{'$set': {'currentJob': 'Magdown', 'jobStart': self.data['timeStamp']}})
                 logString = "Start Magdown at " + datetime.now().strftime('%a, %c')
@@ -164,6 +176,7 @@ class labControl(QtGui.QMainWindow):
                 logString = "Start Soak at " + datetime.now().strftime('%a, %c')
                 self.startSoakTime = datetime.now()
                 self.writeLog(logString)
+                self.heatSwitchControl('Close')
 
         else:
             self.info = self.controlDB.find_one_and_update({},{'$set': {'currentJob': 'None'}})
@@ -179,6 +192,7 @@ class labControl(QtGui.QMainWindow):
                 self.statusString = "Warming Up"
             else:
                 self.statusString = "Uncertain State"
+
 
         # Control Magnet
         self.job = self.info['currentJob']
@@ -226,7 +240,29 @@ class labControl(QtGui.QMainWindow):
                 value = 0 #Return 0 if instrument is not connected
             self.data[reading['name']] = float(value)
         self.data['percentComplete'] = round(self.data['psCurrent']/9 * 100)
-        self.data['switchState'] = "Closed"
+
+
+        self.heatSwitch.writelines('R') #Read Heat Switch
+
+        self.data['switchState'] = self.heatSwitch.readline().strip()
+        # print(self.data['switchState'])
+        self.switchStatus.setText(self.data['switchState'])
+
+    def heatSwitchControl(self, cmd):
+        print("Controlling HS")
+        if cmd == 'Open':
+            print("Opening HS")
+            self.heatSwitch.writelines('O')
+            # pass
+        elif cmd == 'Close':
+            print("Closing HS")
+            self.heatSwitch.writelines('C')
+            # pass
+
+        if hasattr(self, 'lastCommand'):
+            self.controlDB.find_one_and_update({},{'$set': {'command': self.lastCommand}})
+        else:
+            self.controlDB.find_one_and_update({},{'$set': {'command': 'None'}})
 
     def magup(self):
         if self.magupBtn.text() == "Start":
