@@ -1,0 +1,74 @@
+{
+  "fridge": "DR1",
+  "logFileName": "DR1Log.txt",
+  "mongoClient": "mongodb://prl-redmine.syr.edu",
+  "sensors": [
+    {
+      "name": "MXCD",
+      "instr": "Lakeshore 218",
+      "command": "KRDG? 1"
+    },
+    {
+      "name": "still",
+      "instr": "Lakeshore 218",
+      "command": "KRDG? 3"
+    },
+    {
+      "name": "1KPot",
+      "instr": "Lakeshore 218",
+      "command": "KRDG? 4"
+    },
+    {
+      "name": "HeIn",
+      "instr": "Lakeshore 218",
+      "command": "KRDG? 5"
+    },
+    {
+      "name": "HeOut",
+      "instr": "Lakeshore 218",
+      "command": "KRDG? 6"
+    },
+    {
+      "name": "LN2Out",
+      "instr": "Lakeshore 218",
+      "command": "KRDG? 7"
+    },
+    {
+      "name": "sinter",
+      "instr": "Lakeshore 218",
+      "command": "KRDG? 8"
+    },
+    {
+      "name": "MXCR",
+      "instr": "Picowatt",
+      "command": "ADC;RES?"
+    },
+    {
+      "name": "stillPressure",
+      "instr": "PDR2000",
+      "command": "p"
+    },
+    {
+      "name": "1KPotPressure",
+      "instr": "PDR2000",
+      "command": "p"
+    }
+  ],
+  "instruments": [
+    {
+      "name": "Lakeshore 218",
+      "address": "GPIB0::2::INSTR",
+      "connected": true
+    },
+    {
+      "name": "Picowatt",
+      "address": "GPIB0::20::INSTR",
+      "connected": true
+    },
+    {
+      "name": "PDR2000",
+      "address": "COM3",
+      "connected": false
+    }
+  ]
+}
