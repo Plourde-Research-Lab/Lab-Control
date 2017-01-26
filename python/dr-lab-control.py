@@ -1,6 +1,6 @@
 import sys
 from os import popen
-from PyQt4 import QtCore, QtGui, uic
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
 import time
 import numpy as np
@@ -11,7 +11,7 @@ import pyvisa
 import serial
 import json
 
-class labControl(QtGui.QMainWindow):
+class labControl(QtWidgets.QMainWindow):
 
     def __init__(self):
         super(labControl, self).__init__()
@@ -183,6 +183,6 @@ class labControl(QtGui.QMainWindow):
         print("Read last 50 lines")
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     window = labControl()
     sys.exit(app.exec_())

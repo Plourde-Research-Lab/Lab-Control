@@ -67,7 +67,7 @@
     },
     {
       "name": "PDR2000",
-      "address": "COM3",
+      "address": "COM8",
       "connected": false
     }
   ]
