@@ -1,6 +1,6 @@
 import sys
 from os import popen
-from PyQt4 import QtCore, QtGui, uic
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
 import time
 import numpy as np
@@ -11,7 +11,7 @@ import pyvisa
 from serial import Serial
 import json
 
-class labControl(QtGui.QMainWindow):
+class labControl(QtWidgets.QMainWindow):
 
     def __init__(self):
         super(labControl, self).__init__()
@@ -209,6 +209,11 @@ class labControl(QtGui.QMainWindow):
                     print('9A reached')
                     self.info = self.controlDB.find_one_and_update({},{'$set': {'command': 'Soak'}})
             self.statusString = "Magup"
+
+            ## Close Heat Switch if oneKTemp surpasses threeKTemp, and only check every 3 steps.
+            if (self.data['oneKTemp'] - self.data['threeKTemp'] > .5) and (self.data['switchState'] == 'Open') and (nextV % 3 == 0):
+                self.heatSwitchControl('Close')
+
         elif self.job == 'Magdown':
             # Decrease Magnet Voltage
             currentV = self.data['psVoltCommand']*1000
@@ -242,9 +247,9 @@ class labControl(QtGui.QMainWindow):
         self.data['percentComplete'] = round(self.data['psCurrent']/9 * 100)
 
 
-        self.heatSwitch.writelines('R') #Read Heat Switch
+        self.heatSwitch.write(b'R') #Read Heat Switch
 
-        self.data['switchState'] = self.heatSwitch.readline().strip()
+        self.data['switchState'] = str(self.heatSwitch.readline().strip(), 'utf-8')
         # print(self.data['switchState'])
         self.switchStatus.setText(self.data['switchState'])
 
@@ -252,14 +257,14 @@ class labControl(QtGui.QMainWindow):
         print("Controlling HS")
         if cmd == 'Open':
             print("Opening HS")
-            self.heatSwitch.writelines('O')
+            self.heatSwitch.write(b'O')
             # pass
         elif cmd == 'Close':
             print("Closing HS")
-            self.heatSwitch.writelines('C')
+            self.heatSwitch.write(b'C')
             # pass
 
-        if hasattr(self, 'lastCommand'):
+        if hasattr(self, 'lastCommand') and not self.lastCommand in ['Open', 'Close']:
             self.controlDB.find_one_and_update({},{'$set': {'command': self.lastCommand}})
         else:
             self.controlDB.find_one_and_update({},{'$set': {'command': 'None'}})
@@ -305,6 +310,6 @@ class labControl(QtGui.QMainWindow):
         print("Read last 50 lines")
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     window = labControl()
     sys.exit(app.exec_())
