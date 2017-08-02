@@ -9,9 +9,19 @@
       "command": "KRDG? B"
     },
     {
+      "name": "baseSensor",
+      "instr": "Lakeshore 332",
+      "command": "SRDG? B"
+    },
+    {
       "name": "oneKTemp",
       "instr": "Lakeshore 332",
       "command": "KRDG? A"
+    },
+    {
+      "name": "oneKSensor",
+      "instr": "Lakeshore 332",
+      "command": "SRDG? A"
     },
     {
       "name": "threeKTemp",
@@ -19,9 +29,19 @@
       "command": "KRDG? A"
     },
     {
+      "name": "threeKSensor",
+      "instr": "Lakeshore 340",
+      "command": "SRDG? A"
+    },
+    {
       "name": "sixtyKTemp",
       "instr": "Lakeshore 340",
       "command": "KRDG? B"
+    },
+    {
+      "name": "sixtyKSensor",
+      "instr": "Lakeshore 340",
+      "command": "SRDG? B"
     },
     {
       "name": "psVoltage",
@@ -57,8 +77,11 @@
     },
     {
       "name": "Agilent 6641A",
-      "address": "GPIB0::6::INSTR",
+      "address": "GPIB0::3::INSTR",
       "connected": true
     }
-  ]
+  ],
+  "heatSwitch": {
+    "address": "COM10"
+  }
 }
