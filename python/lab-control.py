@@ -226,6 +226,10 @@ class labControl(QtWidgets.QMainWindow):
         elif self.job == 'Soak':
             # Soak
             self.statusString = "Soak"
+        ## Close Heat Switch when warming up
+        elif self.job == 'None':
+            if (self.data['threeKTemp'] > 10) and (self.data['switchState'] == 'Open'):
+                self.heatSwitchControl('Close')
         else:
             pass
 
