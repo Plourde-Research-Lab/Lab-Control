@@ -38,7 +38,8 @@ class labControl(QtWidgets.QMainWindow):
         self.connectInstruments()
 
         ### Power supply parameters
-
+        self.powerSupply = next((x for x in self.instruments if x['name'] == "Agilent 6641A"), None)['obj']
+        self.initMagnet()
 
         # Connect to database
 
@@ -114,7 +115,7 @@ class labControl(QtWidgets.QMainWindow):
             #     self.toggleConnection(i)
 
     def writeVolt(self, volt):
-        next((x for x in self.instruments if x['name'] == "Agilent 6641A"), None)['obj'].write('VOLT:LEV:IMM ' + str(volt) + 'mV')
+        self.powerSupply.write('VOLT:LEV:IMM ' + str(volt) + 'mV')
         self.writeConsole(str(volt) + "mV\t" + "Current: " + str(self.data['psCurrent']) + "\tVoltage: " + str(self.data['psVoltage']))
 
     def control(self):
@@ -312,6 +313,12 @@ class labControl(QtWidgets.QMainWindow):
         self.writeLog(self.logFile.read())
         self.logFile.close()
         print("Read last 50 lines")
+
+    def initMagnet(self):
+        if not bool(float(self.powerSupply.query('OUTPUT?'))):
+            self.powerSupply.
+                write('VOLT:LEV:IMM 0V\nCURRENT:LEV:IMM 9.2A\nOUTPUT 1')
+            self.writeConsole("Magnet Initialized")
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
